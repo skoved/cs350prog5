@@ -1,10 +1,10 @@
-#Program 5: Super Simple File System
+# Program 5: Super Simple File System
 
 
-##Two Parts
-*ssfs_mkdsk
-*ssfs
+## Two Parts
+* ssfs_mkdsk
+* ssfs
 
 
 
-##CS 350 @ Binghamton University
+## CS 350 @ Binghamton University
