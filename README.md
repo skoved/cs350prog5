@@ -1,7 +1,7 @@
 # Program 5: Super Simple File System
 
 
-## Two Parts
+Two Parts
 * ssfs_mkdsk
 * ssfs
 
