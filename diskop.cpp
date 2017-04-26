@@ -1,3 +1,5 @@
+#include "diskop.hpp"
+
 
 //Me
 void create(std::string filename){
