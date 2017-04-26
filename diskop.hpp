@@ -1,14 +1,17 @@
 #ifndef DISKOP_HPP
 #define DISKOP_HPP
+
+#include <iostream>
 #include <string>
 
 void create(std::string filename);
 
-void import(std::string filename, std::string unix);
+void import(std::string filename, std::string unix_filename);
 
 void cat(std::string filename);
 
-void delete(std::string filename);
+//Instruction name "DELETE"
+void remove(std::string filename);
 
 void write(std::string filename, char c, int startByte, int numByte);
 
