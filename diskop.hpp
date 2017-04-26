@@ -4,6 +4,11 @@
 #include <iostream>
 #include <string>
 
+//Helper function
+/*
+INODE_T findINode(std::string filename);
+*/
+
 void create(std::string filename);
 
 void import(std::string filename, std::string unix_filename);
