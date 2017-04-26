@@ -1,5 +1,3 @@
-#include "diskop.hpp"
-
 
 //Me
 void create(std::string filename){
@@ -31,9 +29,9 @@ void read(std::string filename, int startBytes, int numBytes){
 
 }
 
+
 void list(){
-	//For each iNode in use
-	cout << fileName << "\t" << fileSize << endl;
+  //Step through the inodes, and read out name and size
 }
 
 void shutdown(){
