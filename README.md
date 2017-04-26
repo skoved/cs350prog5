@@ -7,4 +7,4 @@
 
 
 
-## CS 350 @ Binghamton University
+###### CS 350 @ Binghamton University
