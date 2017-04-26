@@ -3,3 +3,5 @@
 ssfs_mkdsk
 ssfs
 *.a
+*~
+#*
