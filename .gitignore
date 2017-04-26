@@ -4,4 +4,7 @@ ssfs_mkdsk
 ssfs
 *.a
 *~
-#*
+'#*
+ssfs
+ssfs_mkdsk
+*.gch
