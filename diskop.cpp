@@ -30,7 +30,8 @@ void create(std::string filename){
   }
 
 
-  /*
+  /*m
+
     Some code to get the index of in-use inodes
   */
 
@@ -61,9 +62,9 @@ void read(std::string filename, int startBytes, int numBytes){
 
 }
 
+//Me
 void list(){
-	//For each iNode in use
-	cout << fileName << "\t" << fileSize << endl;
+  //Step through the inodes, and read out name and size
 }
 
 void shutdown(){
