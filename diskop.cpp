@@ -31,9 +31,9 @@ void read(std::string filename, int startBytes, int numBytes){
 
 }
 
-//Me
 void list(){
-  //Step through the inodes, and read out name and size
+	//For each iNode in use
+	cout << fileName << "\t" << fileSize << endl;
 }
 
 void shutdown(){
