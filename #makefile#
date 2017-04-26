@@ -1,4 +1,4 @@
-OBJ:= ssfs.o superblock.o diskop.o controller.o
+OBJ:= ssfs.o superblock.o diskop.o controller.cpp
 SRC:= ssfs.cpp superblock.cpp diskop.cpp controller.cpp
 SRC2:= ssfs_mkdsk.cpp superblock.cpp controller.cpp
 OBJ2:= ssfs_mkdsk.o superblock.o controller.o
