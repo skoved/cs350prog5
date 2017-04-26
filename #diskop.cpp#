@@ -1,5 +1,3 @@
-#include "diskop.hpp"
-
 
 //Me
 void create(std::string filename){
@@ -31,7 +29,7 @@ void read(std::string filename, int startBytes, int numBytes){
 
 }
 
-//Me
+
 void list(){
   //Step through the inodes, and read out name and size
 }
