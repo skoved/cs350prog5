@@ -21,7 +21,8 @@ void read(std::string filename, int startBytes, int numBytes){
 
 }
 void list(){
-
+	//For each iNode in use
+	cout << fileName << "\t" << fileSize << endl;
 }
 
 void shutdown(){
