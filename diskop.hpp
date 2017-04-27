@@ -1,8 +1,11 @@
 #ifndef DISKOP_HPP
 #define DISKOP_HPP
 
+#include "superblock.h"
 #include <iostream>
 #include <string>
+
+struct superblock initSystem(char *fileName);
 
 void create(std::string filename);
 

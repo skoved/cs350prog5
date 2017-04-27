@@ -1,8 +1,25 @@
 #include "diskop.hpp"
+#include "superblock.h"
+#include <stdio.h>
+#include <stdlib.h>
 
 #define MAX_INODE 256
 
 using namespace std;
+
+struct superblock initSystem(char *fileName){
+    FILE *ssfs = fopen(fileName, "rb");
+    struct superblock fileSys;
+    if(ssfs != NULL){
+        fread(&fileSys, sizeof(struct superblock), 1, ssfs);
+        fclose(ssfs);
+    }
+    else{
+        cerr << "cannot open file system " << fileName << endl;
+        exit(0);
+    }
+    return fileSys;
+}
 
 //Me
 void create(std::string filename){
