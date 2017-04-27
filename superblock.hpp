@@ -3,17 +3,15 @@
 
 using namespace std;
 /**
- * Super block class
+ * Super block struct
  */
 
-class Superblock{
-    public:
-        int blockSize;
-        int numBlocks;
-        int inodeMap;
-        int freeBlockList;
+struct superblock{
 
-        Superblock(int, int);
+    int blockSize;
+    int numBlocks;
+    int inodeMap;
+    int freeBlockList;
 };
 
 #endif
