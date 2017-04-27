@@ -122,6 +122,18 @@ void list(){
   //Step through the inodes, and read out name and size
 }
 
-void shutdown(){
-
+void shutdown(struct superblock fileSys, char *fileName){
+    //close other thread and make sure that all relevent data is written back to where it belongs
+    
+    //write super block back to the file
+    FILE *sys = fopen(fileName, "wb");
+    if(sys != NULL){
+        fwrite(&fileSys, sizeof(fileSys), 1, sys);
+        fclose(sys);
+    }
+    else{
+        cerr << "critical error: cannot write back meta data" << endl;
+        exit(0);
+    }
+    return;
 }

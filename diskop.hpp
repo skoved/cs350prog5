@@ -27,7 +27,7 @@ void read(std::string filename, int startByte, int numByte);
 
 void list(std::string filename);
 
-void shutdown();
+void shutdown(struct superblock fileSys, char *fileName);
 
 
 #endif
