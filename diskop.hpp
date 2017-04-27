@@ -5,6 +5,11 @@
 #include <iostream>
 #include <string>
 
+//Helper function
+/*
+INODE_T findINode(std::string filename);
+*/
+
 struct superblock initSystem(char *fileName);
 
 void create(std::string filename);
