@@ -33,18 +33,19 @@ int main(int agrc, char **argv){
     }
 
     //create super block and create file system
-    struct superblock *dumb = (superblock) malloc(sizeof(struct superblock));
-    dumb->blockSize = blockSize;
-    dumb->numBlocks = numBlocks;
-    dumb->inodeMap = 0;
-    dumb->freeblockList = 0;
+    struct superblock dumb;
+    dumb.blockSize = blockSize;
+    dumb.numBlocks = numBlocks;
+    dumb.inodeMap = 0;
+    dumb.freeBlockList = 0;
    
     //create file and write out to it
     FILE * ssfs;
     ssfs = fopen(argv[3], "wb");
 
     if( ssfs != NULL){
-        fwrite(dumb, sizeof(struct superblock), 1, ssfs);
+        fwrite(&dumb, sizeof(struct superblock), 1, ssfs);
+        fclose(ssfs);
     }
     else{
         cerr << "cannot create file system :(" << endl;
