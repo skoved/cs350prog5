@@ -46,6 +46,8 @@ int main(int agrc, char **argv){
     //determine remaining size of the file
     int fremain = blockSize * numBlocks - sizeof(superblock_t);
     char *data = (char*) malloc(fremain);
+    for(int i=0; i<fremain; i++)
+        data[i] = 0;
     printf("data value: %d\n", &data);
 
     if( ssfs != NULL){
