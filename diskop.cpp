@@ -8,76 +8,76 @@
 using namespace std;
 
 struct superblock initSystem(char *fileName){
-    FILE *ssfs = fopen(fileName, "rb");
-    struct superblock fileSys;
-    if(ssfs != NULL){
-        fread(&fileSys, sizeof(struct superblock), 1, ssfs);
-        fclose(ssfs);
-    }
-    else{
-        cerr << "cannot open file system " << fileName << endl;
-        exit(0);
-    }
-    return fileSys;
+  FILE *ssfs = fopen(fileName, "rb");
+  struct superblock fileSys;
+  if(ssfs != NULL){
+    fread(&fileSys, sizeof(struct superblock), 1, ssfs);
+    fclose(ssfs);
+  }else{
+    cerr << "cannot open file system " << fileName << endl;
+    exit(0);
+  }
+  return fileSys;
 }
 
 //Me
-void create(std::string filename){
-/*
-  INODE_T findINode(string filename){
-  //Check that filename already exist
-  if(filename.length() > 32){
-  cerr << "File name is too long" << endl;
-  }
+//void create(std::string filename){
+  /*
+    INODE_T findINode(string filename){
+    //Check that filename already exist
+    if(filename.length() > 32){
+    cerr << "File name is too long" << endl;
+    }
 
-  int inode_number = ssfs.getINodeBitmap();
+    int inode_number = ssfs.getINodeBitmap();
 
-  if(  {inode_number == MAX_INODE} ){
-  cerr << "Not enough inodes to create new files" << endl;
-  }
+    if(  {inode_number == MAX_INODE} ){
+    cerr << "Not enough inodes to create new files" << endl;
+    }
 
 
   
-  bool index[MAX_INODE];
-  int inode_map_value = 0;
+    bool index[MAX_INODE];
+    int inode_map_value = 0;
 
-  //inode_map_value = ssfs_inode_map_value;
+    //inode_map_value = ssfs_inode_map_value;
   
 
-  for(unsigned int i = 0; i < MAX_INODE; i++){
-  index[i] = ((((unsigned int)1) << i) & inode_map_value > 0)?true:false;
-  }
+    for(unsigned int i = 0; i < MAX_INODE; i++){
+    index[i] = ((((unsigned int)1) << i) & inode_map_value > 0)?true:false;
+    }
 
-  bool found = false;
+    bool found = false;
   
-  for(unsigned int i = -0; i < MAX_INODE; i++){
-  if(index[i]){
+    for(unsigned int i = -0; i < MAX_INODE; i++){
+    if(index[i]){
       
-  //Check that inode #i's filename is not the same as parameter's filename
+    //Check that inode #i's filename is not the same as parameter's filename
       
-  found = true;
-  break;
-  }
-  }
-  }
-*/
+    found = true;
+    break;
+    }
+    }
+    }
+  */
 
 
-//Me
+  //Me
 void create(std::string filename){
  
-  //INODE_T found_block = findINode(filename);
-  int* found_block = NULL;
+    //INODE_T found_block = findINode(filename);
+    int* found_block = NULL;
   
-  if(found_block != NULL){
-    cerr << "Filename already in-use" << endl;
-  }
+    if(found_block != NULL){
+      cerr << "Filename already in-use" << endl;
+    }
 
-  /*
-    Create inode and store relevant information
-   */
+    /*
+      Create inode and store relevant information
+    */
   
 }
+
 
 void import(std::string filename, std::string unix_filename){
   
@@ -123,17 +123,17 @@ void list(){
 }
 
 void shutdown(struct superblock fileSys, char *fileName){
-    //close other thread and make sure that all relevent data is written back to where it belongs
+  //close other thread and make sure that all relevent data is written back to where it belongs
     
-    //write super block back to the file
-    FILE *sys = fopen(fileName, "wb");
-    if(sys != NULL){
-        fwrite(&fileSys, sizeof(fileSys), 1, sys);
-        fclose(sys);
-    }
-    else{
-        cerr << "critical error: cannot write back meta data" << endl;
-        exit(0);
-    }
-    return;
+  //write super block back to the file
+  FILE *sys = fopen(fileName, "wb");
+  if(sys != NULL){
+    fwrite(&fileSys, sizeof(fileSys), 1, sys);
+    fclose(sys);
+  }
+  else{
+    cerr << "critical error: cannot write back meta data" << endl;
+    exit(0);
+  }
+  return;
 }

@@ -1,7 +1,7 @@
-OBJ:= ssfs.o superblock.o diskop.o controller.o
-SRC:= ssfs.cpp superblock.cpp diskop.cpp controller.cpp
-SRC2:= ssfs_mkdsk.cpp superblock.cpp controller.cpp
-OBJ2:= ssfs_mkdsk.o superblock.o controller.o
+OBJ:= ssfs.o  diskop.o controller.o
+SRC:= ssfs.cpp diskop.cpp controller.cpp
+SRC2:= ssfs_mkdsk.cpp  controller.cpp
+OBJ2:= ssfs_mkdsk.o  controller.o
 CXX:= g++
 CXXFLAGS:= -Wall -std=c++14
 
