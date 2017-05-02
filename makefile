@@ -24,5 +24,5 @@ diskop.o: diskop.cpp
 	$(CXX) $(CXXFLAGS) -c -g diskop.cpp
 controller.o: controller.cpp
 	$(CXX) $(CXXFLAGS) -c -g controller.cpp
-clean: ssfs
+clean: 
 	rm $(OBJ) $(OBJ2) ssfs ssfs_mkdsk
