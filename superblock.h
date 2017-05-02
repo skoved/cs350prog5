@@ -10,8 +10,9 @@ struct superblock{
 
     int blockSize;
     int numBlocks;
-    int inodeMap;
-    int freeBlockList;
+  
+    int iMap;
+    int dMap;
 };
 typedef struct superblock superblock_t;
 

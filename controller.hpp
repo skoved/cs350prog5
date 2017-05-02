@@ -9,6 +9,7 @@
 #include <sys/shm.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <vector>
 
 #include "superblock.h"
 
@@ -26,31 +27,33 @@ private:
   unsigned int current_instr;
   unsigned int buffer_size;
   int* ptr;
-  File* fh;
+  FILE * fh;
   superblock sb;
   
 public:
-  Controller(std::string filename; unsigned int buffer_size){
-    this->buffer_size = buffer_size;
+  Controller(std::string filename, unsigned int buffer_size);
 
-    //initialize shared buffer
-    ptr = (int*)mmap(0, SIZE, PROT_READ | PROT_WRITE, MAP_SHARED|MAP_ANONYMOUS, -1, 0);
-    
-    //Memory not allocated
-    if(ptr < 0){
-      handle_error("shm open");
-    }
+  /*
+    Disk Operations
 
-    fh = fopen(filename, "wb+");
-    if(fh == NULL){
-      handle_error("file open");
-    }
+    Returns: 
+    int to indicate success or fail
+  */
+  int create(std::string filename);
 
-    //Rewind to locate 0, not necessary here, but may be necessary elsewhere
-    frewind();
-    fread(&sb, sizeof(superblock_t), 1, fh);
+  int import(std::string filename, std::string unix_filename);
 
-  };
+  int cat(std::string filename);
+
+  int remove(std::string filename);
+
+  int write(std::string fielname, char c, int startByte, int numByte);
+
+  std::vector<std::string> read(std::string filename, int startByte, int numByte);
+
+  std::vector<std::string> list(std::string filename);
+
+  int shutdown(struct superblock fileSys, std::string filename);
 };
 
 
