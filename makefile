@@ -5,6 +5,8 @@ OBJ2:= ssfs_mkdsk.o  controller.o
 CXX:= g++
 CXXFLAGS:= -Wall -std=c++14
 
+all: ssfs_mkdsk ssfs
+
 ssfs_mkdsk: $(OBJ2)
 	$(CXX) $(CXXFLAGS) $(OBJ) -o ssfs_mkdsk
 
