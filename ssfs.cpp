@@ -2,7 +2,7 @@
 
 #include "controller.hpp"
 #include "diskop.hpp"
-#include "superblock.hpp"
+#include "superblock.h"
 
 
 int main(){
