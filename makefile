@@ -1,7 +1,7 @@
-OBJ:= ssfs.o  diskop.o controller.o
-SRC:= ssfs.cpp diskop.cpp controller.cpp
-SRC2:= ssfs_mkdsk.cpp  controller.cpp
-OBJ2:= ssfs_mkdsk.o  controller.o
+OBJ:= ssfs.o  diskop.o controller.o user_model.o
+SRC:= ssfs.cpp diskop.cpp controller.cpp user_model.cpp
+SRC2:= ssfs_mkdsk.cpp controller.cpp
+OBJ2:= ssfs_mkdsk.o controller.o
 CXX:= g++
 CXXFLAGS:= -Wall -std=c++14
 

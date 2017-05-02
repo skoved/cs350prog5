@@ -1,5 +1,6 @@
-
 #include "controller.hpp"
+
+using namespace std;
 
 Controller::Controller(std::string filename, unsigned int buffer_size){
   this->buffer_size = buffer_size;
@@ -22,5 +23,18 @@ Controller::Controller(std::string filename, unsigned int buffer_size){
   fread(&sb, sizeof(superblock_t), 1, fh);
 }
 
+int create(string filename);
 
+int import(string filename, string unix_filename);
 
+int cat(string filename);
+
+int remove(string filename);
+
+int write(string fielname, char c, int startByte, int numByte);
+
+std::vector<std::string> read(string filename, int startByte, int numByte);
+
+std::vector<std::string> list(string filename);
+
+int shutdown(struct superblock fileSys, string filename);
