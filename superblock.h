@@ -13,5 +13,6 @@ struct superblock{
     int inodeMap;
     int freeBlockList;
 };
+typedef struct superblock superblock_t;
 
 #endif
