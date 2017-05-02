@@ -43,8 +43,14 @@ int main(int agrc, char **argv){
     FILE * ssfs;
     ssfs = fopen(argv[3], "wb");
 
+    //determine remaining size of the file
+    int fremain = blockSize * numBlocks - sizeof(superblock_t);
+    char *data = (char*) malloc(fremain);
+    printf("data value: %d\n", &data);
+
     if( ssfs != NULL){
-        fwrite(&dumb, sizeof(struct superblock), 1, ssfs);
+        fwrite(&dumb, sizeof(superblock_t), 1, ssfs);
+        fwrite(data, fremain, 1, ssfs);
         fclose(ssfs);
     }
     else{
