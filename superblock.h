@@ -1,8 +1,11 @@
 #ifndef SUPERBLOCK_H
 #define SUPERBLOCK_H
 
-using namespace std;
-/**
+
+
+
+
+/*
  * Super block struct
  */
 
