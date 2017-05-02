@@ -36,8 +36,8 @@ int main(int agrc, char **argv){
     struct superblock dumb;
     dumb.blockSize = blockSize;
     dumb.numBlocks = numBlocks;
-    dumb.inodeMap = 0;
-    dumb.freeBlockList = 0;
+    dumb.iMap = 0;
+    dumb.dMap = 0;
    
     //create file and write out to it
     FILE * ssfs;
@@ -48,7 +48,6 @@ int main(int agrc, char **argv){
     char *data = (char*) malloc(fremain);
     for(int i=0; i<fremain; i++)
         data[i] = 0;
-    printf("data value: %d\n", &data);
 
     if( ssfs != NULL){
         fwrite(&dumb, sizeof(superblock_t), 1, ssfs);
