@@ -36,8 +36,6 @@ int main(int agrc, char **argv){
     struct superblock dumb;
     dumb.blockSize = blockSize;
     dumb.numBlocks = numBlocks;
-    dumb.iMap = 0;
-    dumb.dMap = 0;
    
     //create file and write out to it
     FILE * ssfs;
