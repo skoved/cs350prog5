@@ -94,7 +94,8 @@ int Controller::remove(string filename){
 }
 
 int Controller::write(string filename, char c, int startByte, int numByte){
-	 
+	int filePos = this->findPosition(filename);
+	
   
 	return -1;
 }

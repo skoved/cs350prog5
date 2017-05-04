@@ -15,13 +15,5 @@ void inode_init(inode_t *node, const char *name){
     }
     node->indirect = 0;
     node->dindirect = 0;
-
-
-
-
-
-
-
-
 }
 	
