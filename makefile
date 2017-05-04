@@ -14,7 +14,7 @@ ssfs: $(OBJ)
 	$(CXX) $(CXXFLAGS) $(OBJ) -o ssfs
 
 ssfs_mkdsk.o: $(SRC2)
-	$(CXX) $(CXXFLAGS) -c -g $(SRC)
+	$(CXX) $(CXXFLAGS) -c -g $(SRC2)
 
 ssfs.o: $(SRC)
 	$(CXX) $(CXXFLAGS) -c -g $(SRC)
