@@ -112,12 +112,12 @@ int Controller::findPosition(string filename){
 	return -1;
 }
 
-vector<string> Controller::read(string filename, int startByte, int numByte){
-  return vector<string>();
+int Controller::read(string filename, int startByte, int numByte){
+  return -1;
 }
 
-vector<string> Controller::list(string filename){
-  return vector<string>();
+int Controller::list(string filename){
+  return -1;
 }
 
 int Controller::shutdown(struct superblock fileSys, string filename){

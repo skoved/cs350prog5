@@ -64,9 +64,9 @@ public:
 
   int write(std::string fielname, char c, int startByte, int numByte);
 
-  std::vector<std::string> read(std::string filename, int startByte, int numByte);
+  int read(std::string filename, int startByte, int numByte);
 
-  std::vector<std::string> list(std::string filename);
+  int list(std::string filename);
 
   int shutdown(struct superblock fileSys, std::string filename); 
 
