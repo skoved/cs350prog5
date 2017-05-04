@@ -41,46 +41,37 @@ Controller::Controller(std::string filename, unsigned int buffer_size){
 }
 
 int Controller::create(string filename){
-  if(filename.length() > 32)
-    return -1;
-  char* currentBlock = (char*)malloc(BYTE * B_SIZE);
-  int firstEmptyINode = 0;
-  bool isEqual = true;
-  for(int i = 3; i < INODE_MAX; i++){
-    if(this->readBit(this->iMap, i)){
-      this->readBlock(i, currentBlock);
-      for(unsigned int j = 0; j < filename.length(); j++){
-	if(filename[j] != currentBlock[j]){
-	  isEqual = false;				
-	  break;				
-	}
-      }
-      if(currentBlock[filename.length()] == '\0' && isEqual == true){
-		isEqual = true;						
-      }
-	  else{
-		isEqual = false;	  
-	}
-      if(isEqual){		
-	free(currentBlock);
-	return -1;	
-      }
-      isEqual = true;
-    }
-    else if(this->readBit(this->iMap, i) == 0 && firstEmptyINode == 0){
-      firstEmptyINode = i;		
-    }	
-  }	
-  if(firstEmptyINode == 0){
-    free(currentBlock);
-    return -1;
-  }
-  free(currentBlock);
-  createInode(filename.c_str(), firstEmptyINode);
-  this->setBit(iMap, firstEmptyINode, 1);
-  this->writeBlock(IMAP_POS,this->iMap);	
+	if(filename.length() > 32)
+		return -1;
+	inode_t currentBlock;
+	fseek(fh, B_SIZE * 3, SEEK_SET);
+	int firstEmptyINode = 0;
+	bool isEqual = true;
+	for(int i = 3; i < INODE_MAX; i++){
+		fread(&currentBlock, sizeof(inode_t), 1, fh);
+		fseek(fh, i * B_SIZE, SEEK_SET);
+
+		if(this->readBit(this->iMap, i)){
+     		string s(currentBlock.fileName);
+			isEqual=(s.compare(filename))?true:false;	
+		}
+      	if(isEqual){		
+			return -1;	
+      	}
+      	isEqual = true;
+    
+   	 	if(this->readBit(this->iMap, i) == 0 && firstEmptyINode == 0){
+      		firstEmptyINode = i;		
+    	}
+  	}		
+  	if(firstEmptyINode == 0){
+    	return -1;
+  	}
+  	createInode(filename.c_str(), firstEmptyINode);
+  	this->setBit(iMap, firstEmptyINode, 1);
+  	this->writeBlock(IMAP_POS,this->iMap);	
 	
-  return 1;
+	return 1;
 }
 
 int Controller::import(string filename, string unix_filename){
@@ -98,37 +89,29 @@ int Controller::remove(string filename){
 int Controller::write(string filename, char c, int startByte, int numByte){
 	int filePos = this->findPosition(filename);
 	char* currentBlock = (char*)malloc(BYTE * B_SIZE);	
-  	
+  	this->readBlock(filePos, currentBlock);
 	return -1;
 }
 
 int Controller::findPosition(string filename){
-  unsigned int j;
-  bool isEqual = true;
-  char* currentBlock = (char*)malloc(BYTE * B_SIZE);
-  for(int i = 3; i < INODE_MAX; i++){
-    if(this->readBit(this->iMap, i)){
-      this->readBlock(i, currentBlock);
-      for(j = 0; j < filename.length(); j++){
-	if(filename[j] != currentBlock[j]){
-	  isEqual = false;				
-	  break;				
-	}
-      }
-      if(currentBlock[filename.length()] == '\0' && isEqual == true){
-		isEqual = true;						
-      }
-	  else{
-		isEqual = false;	  
+	inode_t currentBlock;
+	fseek(fh, B_SIZE * 3, SEEK_SET);
+	int firstEmptyINode = 0;
+	bool isEqual = false;
+	for(int i = 3; i < INODE_MAX; i++){
+		fread(&currentBlock, sizeof(inode_t), 1, fh);
+		fseek(fh, i * B_SIZE, SEEK_SET);
+
+		if(this->readBit(this->iMap, i)){
+     		string s(currentBlock.fileName);
+			isEqual=(s.compare(filename))?true:false;	
 		}
-		
-      if(isEqual){
-		return j;	
-      }
-      isEqual = true;
-    }
-  }	
-  return -1;
+      	if(isEqual){		
+			return i;	
+      	}    
+  	}	
+
+	return -1;
 }
 
 vector<string> Controller::read(string filename, int startByte, int numByte){
