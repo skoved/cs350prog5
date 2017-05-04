@@ -35,10 +35,14 @@ Controller::Controller(std::string filename, unsigned int buffer_size){
   }
 	
   this->writeBlock(1, imap);
+<<<<<<< HEAD
+  this->writeBlock(2, dmap);
+=======
   this->writeBlock(2, dmap); 
   this->iMap = imap;
   this->dMap = dmap;
 
+>>>>>>> 2930967e682b78d417cd7d8b4c1f9c6b6d632284
   
 }
 
@@ -72,14 +76,9 @@ int Controller::create(string filename){
 		return -1;
 	}
 	free(currentBlock);
-	char* newBlock = (char*)malloc(BYTE * B_SIZE);
-	for(unsigned int i = 0; i < filename.length(); i++){
-		//Define Struct of INode	
-	}
+	createInode(filename.c_str(), firstEmptyINode);
 	this->setBit(iMap, firstEmptyINode, 1);
-	this->writeBlock(IMAP_POS,this->iMap);
-	this->writeBlock(firstEmptyINode, newBlock);
-	free(newBlock);	
+	this->writeBlock(IMAP_POS,this->iMap);	
 	
 	return 1;
 }
@@ -110,6 +109,15 @@ vector<string> Controller::list(string filename){
 
 int Controller::shutdown(struct superblock fileSys, string filename){
   return -1;
+}
+
+void Controller::createInode(const char* name, int index){
+	inode_t node;
+	inode_init( &node, name);
+	rewind(fh);
+	fseek(fh, index * B_SIZE, SEEK_CUR);
+	fwrite(&node, sizeof(node), 1, fh);
+	 
 }
 
 

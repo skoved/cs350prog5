@@ -1,5 +1,5 @@
-OBJ:= ssfs.o  diskop.o controller.o
-SRC:= ssfs.cpp diskop.cpp controller.cpp
+OBJ:= ssfs.o  diskop.o controller.o inode.o
+SRC:= ssfs.cpp diskop.cpp controller.cpp inode.cpp
 SRC2:= ssfs_mkdsk.cpp controller.cpp
 OBJ2:= ssfs_mkdsk.o controller.o
 CXX:= g++
@@ -24,5 +24,7 @@ diskop.o: diskop.cpp
 	$(CXX) $(CXXFLAGS) -c -g diskop.cpp
 controller.o: controller.cpp
 	$(CXX) $(CXXFLAGS) -c -g controller.cpp
+inode.o: inode.cpp
+	$(CXX) $(CXXFLAGS) -c -g inode.cpp
 clean: 
 	rm $(OBJ) $(OBJ2) ssfs ssfs_mkdsk

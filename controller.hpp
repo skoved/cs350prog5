@@ -11,7 +11,12 @@
 #include <unistd.h>
 #include <vector>
 
+#include "inode.h"
 #include "superblock.h"
+
+#define SUPER_POS 0
+#define IMAP_POS 1
+#define DMAP_POS 2
 
 #define B_SIZE (unsigned int)sb.blockSize
 #define BYTE sizeof(char)
@@ -63,7 +68,9 @@ public:
 
   std::vector<std::string> list(std::string filename);
 
-  int shutdown(struct superblock fileSys, std::string filename);
+  int shutdown(struct superblock fileSys, std::string filename); 
+
+  void createInode(const char* name, int index);
 
   bool readBit(char* a, unsigned int bit_pos);
   
