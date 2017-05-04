@@ -35,15 +35,10 @@ Controller::Controller(std::string filename, unsigned int buffer_size){
   }
 	
   this->writeBlock(1, imap);
-<<<<<<< HEAD
-  this->writeBlock(2, dmap);
-=======
   this->writeBlock(2, dmap); 
   this->iMap = imap;
   this->dMap = dmap;
 
->>>>>>> 2930967e682b78d417cd7d8b4c1f9c6b6d632284
-  
 }
 
 int Controller::create(string filename){
@@ -61,7 +56,10 @@ int Controller::create(string filename){
 					break;				
 				}
 			}
-			if(isEqual){
+			if(currentBlock[filename.length()] != '\0'){
+				isEqual = false;						
+			}
+			if(isEqual){		
 				free(currentBlock);
 				return -1;	
 			}
@@ -95,7 +93,35 @@ int Controller::remove(string filename){
   return -1;
 }
 
-int Controller::write(string fielname, char c, int startByte, int numByte){
+int Controller::write(string filename, char c, int startByte, int numByte){
+	 
+  
+	return -1;
+}
+
+int Controller::findPosition(string filename){
+  unsigned int j;
+  bool isEqual = true;
+  char* currentBlock = (char*)malloc(BYTE * B_SIZE);
+  for(int i = 3; i < INODE_MAX; i++){
+	if(this->readBit(this->iMap, i)){
+		this->readBlock(i, currentBlock);
+		for(j = 0; j < filename.length(); j++){
+			if(filename[j] != currentBlock[j]){
+				isEqual = false;				
+				break;				
+			}
+		}
+		if(currentBlock[filename.length()] == '\0'){
+				isEqual = true;						
+		}
+		
+		if(isEqual){
+			return j;	
+		}
+		isEqual = true;
+	}
+  }	
   return -1;
 }
 
