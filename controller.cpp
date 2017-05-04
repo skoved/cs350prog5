@@ -49,7 +49,7 @@ int Controller::create(string filename){
 	bool isEqual = true;
 	for(int i = 3; i < INODE_MAX; i++){
 		fread(&currentBlock, sizeof(inode_t), 1, fh);
-		fseek(fh, i * B_SIZE, SEEK_SET);
+		fseek(fh, i+1 * B_SIZE, SEEK_SET);
 
 		if(this->readBit(this->iMap, i)){
      		string s(currentBlock.fileName);
@@ -96,7 +96,6 @@ int Controller::write(string filename, char c, int startByte, int numByte){
 int Controller::findPosition(string filename){
 	inode_t currentBlock;
 	fseek(fh, B_SIZE * 3, SEEK_SET);
-	int firstEmptyINode = 0;
 	bool isEqual = false;
 	for(int i = 3; i < INODE_MAX; i++){
 		fread(&currentBlock, sizeof(inode_t), 1, fh);
