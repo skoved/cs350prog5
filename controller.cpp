@@ -55,9 +55,12 @@ int Controller::create(string filename){
 	  break;				
 	}
       }
-      if(currentBlock[filename.length()] != '\0'){
-	isEqual = false;						
+      if(currentBlock[filename.length()] == '\0' && isEqual == true){
+		isEqual = true;						
       }
+	  else{
+		isEqual = false;	  
+	}
       if(isEqual){		
 	free(currentBlock);
 	return -1;	
@@ -94,9 +97,9 @@ int Controller::remove(string filename){
 
 int Controller::write(string filename, char c, int startByte, int numByte){
 	int filePos = this->findPosition(filename);
-	
-  
-  return -1;
+	char* currentBlock = (char*)malloc(BYTE * B_SIZE);	
+  	
+	return -1;
 }
 
 int Controller::findPosition(string filename){
@@ -112,12 +115,15 @@ int Controller::findPosition(string filename){
 	  break;				
 	}
       }
-      if(currentBlock[filename.length()] == '\0'){
-	isEqual = true;						
+      if(currentBlock[filename.length()] == '\0' && isEqual == true){
+		isEqual = true;						
       }
+	  else{
+		isEqual = false;	  
+		}
 		
       if(isEqual){
-	return j;	
+		return j;	
       }
       isEqual = true;
     }
