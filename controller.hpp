@@ -19,12 +19,17 @@
 
 #define B_SIZE (unsigned int)sb.blockSize
 #define BYTE sizeof(char)
-
+#define INODE_MAX 256
+#define NAME_SIZE 32
 #define handle_error(msg)			\
   do{						\
     perror(msg);				\
     exit(EXIT_FAILURE);				\
   } while(0)
+
+#define SUPER_POS 0
+#define IMAP_POS 1
+#define DMAP_POS 2
 
 #define SIZE (sizeof(unsigned int) * buffer_size)
 
@@ -36,6 +41,8 @@ private:
   int* ptr;
   FILE * fh;
   superblock sb;
+  char* iMap;
+  char* dMap;
   
 public:
   Controller(std::string filename, unsigned int buffer_size);
