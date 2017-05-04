@@ -66,12 +66,28 @@ struct superblock initSystem(char *fileName){
 void create(std::string filename){
  
     //INODE_T found_block = findINode(filename);
-    int* found_block = NULL;
-  
+	/*
+			File Pointer at the Beginning of Superblock
+			Skip Superblock
+			Save IMap for use
+			Skip DMap
+			Read in Inode
+			Check if Inode.fileName = fileName
+			if yes
+				return "FileName already in Use"
+			if no
+				Go back to imap
+				look for open slot
+				go to that open slot
+				create inode with filename
+				map to data block
+	 */
+    int* found_block = NULL; 
     if(found_block != NULL){
       cerr << "Filename already in-use" << endl;
     }
 
+	
     /*
       Create inode and store relevant information
     */
