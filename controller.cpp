@@ -65,7 +65,14 @@ int Controller::shutdown(struct superblock fileSys, string filename){
 }
 
 bool Controller::readBit(char* a, unsigned int bit_pos){
-  
+  unsigned int index = (unsigned int) bit_pos/8;
+  unsigned int bit_index = bit_pos % 8;
+  if(index > B_SIZE){
+    return false;
+  }
+  if(a[index] & (1 << bit_index)){
+    return true;
+  }
   return false;
 }
 
