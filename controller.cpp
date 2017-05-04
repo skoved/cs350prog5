@@ -35,7 +35,7 @@ Controller::Controller(std::string filename, unsigned int buffer_size){
   }
 
   this->writeBlock(1, imap);
-  this->writeBlock(1, dmap);
+  this->writeBlock(2, dmap);
   
 }
 
