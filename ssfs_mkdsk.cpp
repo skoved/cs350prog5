@@ -36,7 +36,11 @@ int main(int agrc, char **argv){
     struct superblock dumb;
     dumb.blockSize = blockSize;
     dumb.numBlocks = numBlocks;
+    /*
+      superblock no long contains imap and dmap, must include elsewise
+      
    
+    */
     //create file and write out to it
     FILE * ssfs;
     ssfs = fopen(argv[3], "wb");
@@ -50,10 +54,14 @@ int main(int agrc, char **argv){
     if( ssfs != NULL){
         fwrite(&dumb, sizeof(superblock_t), 1, ssfs);
         fwrite(data, fremain, 1, ssfs);
-        fclose(ssfs);
+        //fclose(ssfs);
     }
     else{
         cerr << "cannot create file system :(" << endl;
     }
+
+    /*In Sang added code*/
+    
+    
     return 0;
 }
