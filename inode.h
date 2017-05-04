@@ -6,7 +6,7 @@
  */
 
 struct inode{
-    char *fileName;
+    char fileName[33];
     int fileSize;
     int ptrs[12];
     int indirect;
@@ -16,7 +16,7 @@ struct inode{
 typedef struct inode inode_t;
 
 void inode_init(inode_t *node, char *name){
-    node->fileName  = (char*) malloc(sizeof(name));
+    node->fileName = name;
     node->fileSize = 0;
     for(int i = 0; i<12; i++){
         node->ptrs[i] = 0;
