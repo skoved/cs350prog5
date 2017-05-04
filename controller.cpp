@@ -27,13 +27,61 @@ Controller::Controller(std::string filename, unsigned int buffer_size){
   //Insert imap, insert dmap (in that order)
   fseek(fh, B_SIZE, SEEK_SET);
   
-  
-  
+  char* imap = (char*)malloc(sizeof(char) * B_SIZE);
+  char* dmap = (char*)malloc(sizeof(char) * B_SIZE);
+  for(unsigned int i = 0; i < B_SIZE; i++){
+    imap[i] = 0;
+    dmap[i] = 0;
+  }
+	
+  this->writeBlock(1, imap);
+  this->writeBlock(2, dmap); 
+  this->iMap = imap;
+  this->dMap = dmap;
+
   
 }
 
 int Controller::create(string filename){
-  return -1;
+	if(filename.length() > 32)
+		return -1;
+	char* currentBlock = (char*)malloc(BYTE * B_SIZE);
+	int firstEmptyINode = 0;
+	bool isEqual = true;
+	for(int i = 3; i < INODE_MAX; i++){
+		if(this->readBit(this->iMap, i)){
+			this->readBlock(i, currentBlock);
+			for(unsigned int j = 0; j < filename.length(); j++){
+				if(filename[j] != currentBlock[j]){
+					isEqual = false;				
+					break;				
+				}
+			}
+			if(isEqual){
+				free(currentBlock);
+				return -1;	
+			}
+ 			isEqual = true;
+		}
+		else if(this->readBit(this->iMap, i) == 0 && firstEmptyINode == 0){
+			firstEmptyINode = i;		
+		}	
+	}	
+	if(firstEmptyINode == 0){
+		free(currentBlock);
+		return -1;
+	}
+	free(currentBlock);
+	char* newBlock = (char*)malloc(BYTE * B_SIZE);
+	for(unsigned int i = 0; i < filename.length(); i++){
+		//Define Struct of INode	
+	}
+	this->setBit(iMap, firstEmptyINode, 1);
+	this->writeBlock(IMAP_POS,this->iMap);
+	this->writeBlock(firstEmptyINode, newBlock);
+	free(newBlock);	
+	
+	return 1;
 }
 
 int Controller::import(string filename, string unix_filename){
@@ -92,7 +140,7 @@ void Controller::setBit(char* a, unsigned int bit_pos, bool set_value){
 
 
 //Assume data points to a char array of size blockSize
-int Controller::writeBlock(FILE* fh, unsigned int block_pos, char* data){
+int Controller::writeBlock(unsigned int block_pos, char* data){
   if(data == NULL || fh == NULL){
     return -1;
   }
@@ -108,7 +156,7 @@ int Controller::writeBlock(FILE* fh, unsigned int block_pos, char* data){
   return 1;
 }
 
-int Controller::readBlock(FILE* fh, unsigned int block_pos, char* data){
+int Controller::readBlock(unsigned int block_pos, char* data){
   if(data == NULL || fh == NULL){
     return -1;
   }
