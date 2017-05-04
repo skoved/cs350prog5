@@ -38,47 +38,46 @@ Controller::Controller(std::string filename, unsigned int buffer_size){
   this->writeBlock(2, dmap); 
   this->iMap = imap;
   this->dMap = dmap;
-
 }
 
 int Controller::create(string filename){
-	if(filename.length() > 32)
-		return -1;
-	char* currentBlock = (char*)malloc(BYTE * B_SIZE);
-	int firstEmptyINode = 0;
-	bool isEqual = true;
-	for(int i = 3; i < INODE_MAX; i++){
-		if(this->readBit(this->iMap, i)){
-			this->readBlock(i, currentBlock);
-			for(unsigned int j = 0; j < filename.length(); j++){
-				if(filename[j] != currentBlock[j]){
-					isEqual = false;				
-					break;				
-				}
-			}
-			if(currentBlock[filename.length()] != '\0'){
-				isEqual = false;						
-			}
-			if(isEqual){		
-				free(currentBlock);
-				return -1;	
-			}
- 			isEqual = true;
-		}
-		else if(this->readBit(this->iMap, i) == 0 && firstEmptyINode == 0){
-			firstEmptyINode = i;		
-		}	
-	}	
-	if(firstEmptyINode == 0){
-		free(currentBlock);
-		return -1;
+  if(filename.length() > 32)
+    return -1;
+  char* currentBlock = (char*)malloc(BYTE * B_SIZE);
+  int firstEmptyINode = 0;
+  bool isEqual = true;
+  for(int i = 3; i < INODE_MAX; i++){
+    if(this->readBit(this->iMap, i)){
+      this->readBlock(i, currentBlock);
+      for(unsigned int j = 0; j < filename.length(); j++){
+	if(filename[j] != currentBlock[j]){
+	  isEqual = false;				
+	  break;				
 	}
+      }
+      if(currentBlock[filename.length()] != '\0'){
+	isEqual = false;						
+      }
+      if(isEqual){		
 	free(currentBlock);
-	createInode(filename.c_str(), firstEmptyINode);
-	this->setBit(iMap, firstEmptyINode, 1);
-	this->writeBlock(IMAP_POS,this->iMap);	
+	return -1;	
+      }
+      isEqual = true;
+    }
+    else if(this->readBit(this->iMap, i) == 0 && firstEmptyINode == 0){
+      firstEmptyINode = i;		
+    }	
+  }	
+  if(firstEmptyINode == 0){
+    free(currentBlock);
+    return -1;
+  }
+  free(currentBlock);
+  createInode(filename.c_str(), firstEmptyINode);
+  this->setBit(iMap, firstEmptyINode, 1);
+  this->writeBlock(IMAP_POS,this->iMap);	
 	
-	return 1;
+  return 1;
 }
 
 int Controller::import(string filename, string unix_filename){
@@ -94,9 +93,10 @@ int Controller::remove(string filename){
 }
 
 int Controller::write(string filename, char c, int startByte, int numByte){
-	 
+	int filePos = this->findPosition(filename);
+	
   
-	return -1;
+  return -1;
 }
 
 int Controller::findPosition(string filename){
@@ -104,23 +104,23 @@ int Controller::findPosition(string filename){
   bool isEqual = true;
   char* currentBlock = (char*)malloc(BYTE * B_SIZE);
   for(int i = 3; i < INODE_MAX; i++){
-	if(this->readBit(this->iMap, i)){
-		this->readBlock(i, currentBlock);
-		for(j = 0; j < filename.length(); j++){
-			if(filename[j] != currentBlock[j]){
-				isEqual = false;				
-				break;				
-			}
-		}
-		if(currentBlock[filename.length()] == '\0'){
-				isEqual = true;						
-		}
-		
-		if(isEqual){
-			return j;	
-		}
-		isEqual = true;
+    if(this->readBit(this->iMap, i)){
+      this->readBlock(i, currentBlock);
+      for(j = 0; j < filename.length(); j++){
+	if(filename[j] != currentBlock[j]){
+	  isEqual = false;				
+	  break;				
 	}
+      }
+      if(currentBlock[filename.length()] == '\0'){
+	isEqual = true;						
+      }
+		
+      if(isEqual){
+	return j;	
+      }
+      isEqual = true;
+    }
   }	
   return -1;
 }
@@ -138,11 +138,11 @@ int Controller::shutdown(struct superblock fileSys, string filename){
 }
 
 void Controller::createInode(const char* name, int index){
-	inode_t node;
-	inode_init( &node, name);
-	rewind(fh);
-	fseek(fh, index * B_SIZE, SEEK_CUR);
-	fwrite(&node, sizeof(node), 1, fh);
+  inode_t node;
+  inode_init( &node, name);
+  rewind(fh);
+  fseek(fh, index * B_SIZE, SEEK_CUR);
+  fwrite(&node, sizeof(node), 1, fh);
 	 
 }
 
@@ -160,7 +160,7 @@ bool Controller::readBit(char* a, unsigned int bit_pos){
 }
 
 void Controller::setBit(char* a, unsigned int bit_pos, bool set_value){
-    unsigned int index = (unsigned int) bit_pos/8;
+  unsigned int index = (unsigned int) bit_pos/8;
   unsigned int bit_index = bit_pos % 8;
   if(index > B_SIZE){
     return;
