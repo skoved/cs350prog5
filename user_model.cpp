@@ -4,6 +4,8 @@
 #include <string>
 #include <sstream>
 #include <vector>
+#include <cstring>
+#include <cstdint>
 
 using namespace std;
 /*
@@ -14,7 +16,7 @@ using namespace std;
 	4. Write
  */
 void *user_model(void * arg){
-	char* argument = (char*) arg[1];
+	char* argument = (char*) arg;
     string fileName(argument);
     ifstream inFile(fileName);
     if(inFile.is_open()){
