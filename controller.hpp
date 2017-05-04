@@ -14,6 +14,10 @@
 #include "inode.h"
 #include "superblock.h"
 
+#define SUPER_POS 0
+#define IMAP_POS 1
+#define DMAP_POS 2
+
 #define B_SIZE (unsigned int)sb.blockSize
 #define BYTE sizeof(char)
 #define INODE_MAX 256
