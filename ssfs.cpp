@@ -1,4 +1,6 @@
 #include <string>
+#include <stdio.h>
+#include <stdlib.h>
 #include <sstream>
 #include <vector>
 #include <cstring>
@@ -10,10 +12,28 @@
 #include "diskop.hpp"
 #include "superblock.h"
 
+using namespace std;
+
 void *user_model(void *arg);
 
-int main(){
-  return 0;
+int main(int argc, char **argv){
+    if(argc < 3 || argc > 6){
+        perror("Run as ./ssfs <disk file> <threadops files>\nCan enter up to four thread ops files\n");
+        return 0;
+    }
+
+    //open file
+    FILE *ssfs = fopen(argv[1], "rb+");
+    if(ssfs == NULL){
+        perror("ABORT\n");
+        return 0;
+    }
+
+    superblock_t sb;
+    fread(&sb, sizeof(superblock_t), 1, ssfs);
+    
+
+    return 0;
 }
 
 /*
