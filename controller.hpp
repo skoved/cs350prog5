@@ -62,8 +62,8 @@ public:
   
   void setBit(char* a, unsigned int bit_pos, bool set_value);
   
-  int writeBlock(FILE* fh, unsigned int block_pos, char* data);
+  int writeBlock(unsigned int block_pos, char* data);
   
-  int readBlock(FILE* fh, unsigned int block_pos, char* data);
+  int readBlock(unsigned int block_pos, char* data);
 };
 #endif

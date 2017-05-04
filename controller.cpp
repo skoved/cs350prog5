@@ -27,8 +27,15 @@ Controller::Controller(std::string filename, unsigned int buffer_size){
   //Insert imap, insert dmap (in that order)
   fseek(fh, B_SIZE, SEEK_SET);
   
-  
-  
+  char* imap = (char*)malloc(sizeof(char) * B_SIZE);
+  char* dmap = (char*)malloc(sizeof(char) * B_SIZE);
+  for(unsigned int i = 0; i < B_SIZE; i++){
+    imap[i] = 0;
+    dmap[i] = 0;
+  }
+
+  this->writeBlock(1, imap);
+  this->writeBlock(1, dmap);
   
 }
 
@@ -92,7 +99,7 @@ void Controller::setBit(char* a, unsigned int bit_pos, bool set_value){
 
 
 //Assume data points to a char array of size blockSize
-int Controller::writeBlock(FILE* fh, unsigned int block_pos, char* data){
+int Controller::writeBlock(unsigned int block_pos, char* data){
   if(data == NULL || fh == NULL){
     return -1;
   }
@@ -108,7 +115,7 @@ int Controller::writeBlock(FILE* fh, unsigned int block_pos, char* data){
   return 1;
 }
 
-int Controller::readBlock(FILE* fh, unsigned int block_pos, char* data){
+int Controller::readBlock(unsigned int block_pos, char* data){
   if(data == NULL || fh == NULL){
     return -1;
   }
