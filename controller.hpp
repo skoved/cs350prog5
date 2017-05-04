@@ -11,6 +11,7 @@
 #include <unistd.h>
 #include <vector>
 
+#include "inode.h"
 #include "superblock.h"
 
 #define B_SIZE (unsigned int)sb.blockSize
@@ -63,7 +64,9 @@ public:
 
   std::vector<std::string> list(std::string filename);
 
-  int shutdown(struct superblock fileSys, std::string filename);
+  int shutdown(struct superblock fileSys, std::string filename); 
+
+  void createInode(const char* name, int index);
 
   bool readBit(char* a, unsigned int bit_pos);
   
