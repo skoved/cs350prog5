@@ -8,13 +8,13 @@ CXXFLAGS:= -Wall -std=c++14
 all: ssfs_mkdsk ssfs
 
 ssfs_mkdsk: $(OBJ2)
-	$(CXX) $(CXXFLAGS) $(OBJ) -o ssfs_mkdsk
+	$(CXX) $(CXXFLAGS) $(OBJ2) -o ssfs_mkdsk
 
 ssfs: $(OBJ)
 	$(CXX) $(CXXFLAGS) $(OBJ) -o ssfs
 
 ssfs_mkdsk.o: $(SRC2)
-	$(CXX) $(CXXFLAGS) -c -g $(SRC)
+	$(CXX) $(CXXFLAGS) -c -g $(SRC2)
 
 ssfs.o: $(SRC)
 	$(CXX) $(CXXFLAGS) -c -g $(SRC)
