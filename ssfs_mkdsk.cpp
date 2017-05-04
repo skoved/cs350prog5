@@ -36,13 +36,11 @@ int main(int agrc, char **argv){
     struct superblock dumb;
     dumb.blockSize = blockSize;
     dumb.numBlocks = numBlocks;
-    
     /*
       superblock no long contains imap and dmap, must include elsewise
       
-      
+   
     */
-    
     //create file and write out to it
     FILE * ssfs;
     ssfs = fopen(argv[3], "wb");
@@ -50,7 +48,8 @@ int main(int agrc, char **argv){
     //determine remaining size of the file
     int fremain = blockSize * numBlocks - sizeof(superblock_t);
     char *data = (char*) malloc(fremain);
-    printf("data value: %d\n", &data);
+    for(int i=0; i<fremain; i++)
+        data[i] = 0;
 
     if( ssfs != NULL){
         fwrite(&dumb, sizeof(superblock_t), 1, ssfs);
