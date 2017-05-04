@@ -20,21 +20,87 @@ Controller::Controller(std::string filename, unsigned int buffer_size){
 
   //Rewind to locate 0, not necessary here, but may be necessary elsewhere
   rewind(fh);
+
+  
   fread(&sb, sizeof(superblock_t), 1, fh);
+
+  //Insert imap, insert dmap (in that order)
+  fseek(fh, B_SIZE, SEEK_SET);
+  
+  
+  
+  
 }
 
-int create(string filename);
+int Controller::create(string filename){
+  return -1;
+}
 
-int import(string filename, string unix_filename);
+int Controller::import(string filename, string unix_filename){
+  return -1;
+}
 
-int cat(string filename);
+int Controller::cat(string filename){
+  return -1;
+}
 
-int remove(string filename);
+int Controller::remove(string filename){
+  return -1;
+}
 
-int write(string fielname, char c, int startByte, int numByte);
+int Controller::write(string fielname, char c, int startByte, int numByte){
+  return -1;
+}
 
-std::vector<std::string> read(string filename, int startByte, int numByte);
+vector<string> Controller::read(string filename, int startByte, int numByte){
+  return vector<string>();
+}
 
-std::vector<std::string> list(string filename);
+vector<string> Controller::list(string filename){
+  return vector<string>();
+}
 
-int shutdown(struct superblock fileSys, string filename);
+int Controller::shutdown(struct superblock fileSys, string filename){
+  return -1;
+}
+
+bool Controller::readBit(char* a, unsigned int bit_pos){
+  
+  return false;
+}
+
+void Controller::setBit(char* a, unsigned int bit_pos, bool set_value){
+  return;
+}
+
+
+//Assume data points to a char array of size blockSize
+int Controller::writeBlock(FILE* fh, unsigned int block_pos, char* data){
+  if(data == NULL || fh == NULL){
+    return -1;
+  }
+  
+  //Rewind to start of ssfs
+  rewind(fh);
+
+  //Insert imap, insert dmap (in that order)
+  fseek(fh, B_SIZE * block_pos, SEEK_SET);
+  
+  fwrite(data, B_SIZE, sizeof(char), fh);
+
+  return 1;
+}
+
+int Controller::readBlock(FILE* fh, unsigned int block_pos, char* data){
+  if(data == NULL || fh == NULL){
+    return -1;
+  }
+  //Rewind to start of ssfs
+  rewind(fh);
+
+  //Insert imap, insert dmap (in that order)
+  fseek(fh, B_SIZE * block_pos, SEEK_SET);
+  
+  fread(data, B_SIZE, sizeof(char), fh);
+  return 1;
+}

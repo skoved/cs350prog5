@@ -13,6 +13,9 @@
 
 #include "superblock.h"
 
+#define B_SIZE (unsigned int)sb.blockSize
+#define BYTE sizeof(char)
+
 #define handle_error(msg)			\
   do{						\
     perror(msg);				\
@@ -54,7 +57,13 @@ public:
   std::vector<std::string> list(std::string filename);
 
   int shutdown(struct superblock fileSys, std::string filename);
+
+  bool readBit(char* a, unsigned int bit_pos);
+  
+  void setBit(char* a, unsigned int bit_pos, bool set_value);
+  
+  int writeBlock(FILE* fh, unsigned int block_pos, char* data);
+  
+  int readBlock(FILE* fh, unsigned int block_pos, char* data);
 };
-
-
 #endif
