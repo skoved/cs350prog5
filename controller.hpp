@@ -26,6 +26,9 @@
 #define NAME_SIZE 32
 #define D_POINTER 12
 
+#define MAX_DBLOCK 64
+#define ADDR_START 259
+
 #define handle_error(msg)			\
   do{						\
     perror(msg);				\
@@ -80,12 +83,12 @@ public:
   
   void setBit(char* a, unsigned int bit_pos, bool set_value);
   
-  int writeBlock(unsigned int block_pos, char* data);
+  int writeBlock(char* data, unsigned int block_pos);
   
-  int readBlock(unsigned int block_pos, char* data);
+  int readBlock(char* data, unsigned int block_pos);
 
   int findPosition(std::string filename);
 
-  int findBlock();	
+  int findEmptyBlock();	
 };
 #endif

@@ -27,54 +27,48 @@ Controller::Controller(std::string filename, unsigned int buffer_size){
   //Insert imap, insert dmap (in that order)
   fseek(fh, B_SIZE, SEEK_SET);
   
-  char* imap = (char*)malloc(sizeof(char) * B_SIZE);
-  char* dmap = (char*)malloc(sizeof(char) * B_SIZE);
-  for(unsigned int i = 0; i < B_SIZE; i++){
-    imap[i] = 0;
-    dmap[i] = 0;
-  }
+  this->iMap = (char*)malloc(BYTE * B_SIZE);
+  this->dMap = (char*)malloc(BYTE * B_SIZE);
 
-  fseek(fh, B_SIZE * IMAP_POS, SEEK_SET);
-  fread(&iMap, sizeof(char), B_SIZE, fh);
-  fseek(fh, B_SIZE * DMAP_POS, SEEK_SET);
-  fread(&dMap, sizeof(char), B_SIZE, fh);
-	
-  this->writeBlock(IMAP_POS, imap);
-  this->writeBlock(DMAP_POS, dmap); 
-  this->iMap = imap;
-  this->dMap = dmap;
+  this->readBlock(this->iMap, IMAP_POS);
+  this->readBlock(this->dMap, DMAP_POS);
+
+  char* dup_iMap = (char*)malloc(BYTE * B_SIZE);
+  this->readBlock(dup_iMap, IMAP_POS);
+  cout << "Check saved on recreation " << this->readBit(dup_iMap, 3)  << endl;
 }
 
 int Controller::create(string filename){
-	if(filename.length() > 32)
-		return -1;
-	inode_t currentBlock;
-	int firstEmptyINode = 0;
-	bool isEqual = false;
-	for(int i = 3; i < INODE_MAX; i++){
-		fseek(fh, i * B_SIZE, SEEK_SET);
-		if(this->readBit(this->iMap, i)){
-			fread(&currentBlock, sizeof(inode_t), 1, fh);
-     		string s(currentBlock.fileName);
-			if(s.compare(filename) == 0)
-				isEqual = true;
-		}
-      	if(isEqual){		
-			return -1;	
-      	}
+  if(filename.length() > 32)
+    return -1;
+  inode_t currentBlock;
+  int firstEmptyINode = 0;
+  bool isEqual = false;
+  for(int i = 3; i < INODE_MAX; i++){
+    fseek(fh, i * B_SIZE, SEEK_SET);
+    if(this->readBit(this->iMap, i)){
+      fread(&currentBlock, sizeof(inode_t), 1, fh);
+      string s(currentBlock.fileName);
+      if(s.compare(filename) == 0)
+	isEqual = true;
+    }
+    if(isEqual){		
+      return -1;	
+    }
     
-   	 	if(this->readBit(this->iMap, i) == 0 && firstEmptyINode == 0){
-      		firstEmptyINode = i;		
-    	}
-  	}		
-  	if(firstEmptyINode == 0){
-    	return -1;
-  	}
-  	createInode(filename.c_str(), firstEmptyINode);
-  	this->setBit(iMap, firstEmptyINode, 1);
-  	this->writeBlock(IMAP_POS,this->iMap);	
-	
-	return 1;
+    if(this->readBit(this->iMap, i) == 0 && firstEmptyINode == 0){
+      firstEmptyINode = i;		
+    }
+  }		
+  if(firstEmptyINode == 0){
+    return -1;
+  }
+  createInode(filename.c_str(), firstEmptyINode);
+  this->setBit(iMap, firstEmptyINode, 1);
+  this->writeBlock(this->iMap, IMAP_POS);
+
+  
+  return 1;
 }
 
 int Controller::import(string filename, string unix_filename){
@@ -93,23 +87,31 @@ int Controller::cat(string filename){
   char* data_block = (char*)malloc(BYTE * B_SIZE);
 
   unsigned int cal_start = 0;
-  unsigned int start_byte = 0;
   unsigned int num_block = inode.fileSize;
+
 
   if(num_block == 0){
     return 1;
   }
+  
   int readPos = 0;
   for(unsigned int i = cal_start; i < 12; i++){
     if(this->readBit(this->dMap, inode.ptrs[i])){
-      this->readBlock(inode.ptrs[i], data_block);
-	  for(; readPos<inode.fileSize && readPos<sb.blockSize; readPos++)
+      this->readBlock(data_block, inode.ptrs[i]);
+      for(; readPos<inode.fileSize && readPos<sb.blockSize; readPos++)
       	cout << data_block[readPos%sb.blockSize];
 		
     }else{
       break;
     }
-  }  
+    cout << endl;
+  }
+  cout << endl;
+
+  
+  char* dup_iMap = (char*)malloc(BYTE * B_SIZE);
+  this->readBlock(dup_iMap, IMAP_POS);
+  cout << "Check formation on cat " << this->readBit(dup_iMap, 3)  << endl;
   
   return 1;
 }
@@ -119,134 +121,108 @@ int Controller::remove(string filename){
 }
 
 int Controller::write(string filename, char c, int startByte, int numByte){
-	int filePos = this->findPosition(filename);
-	inode_t currentBlock;
-	fseek(fh, filePos * B_SIZE, SEEK_SET);	
-  	fread(&currentBlock, sizeof(inode_t), 1, fh);
-	vector<int> allocatedDataBlocks;
+  int filePos = this->findPosition(filename);
+  if(filePos == -1){
+    return -1;
+  }
+
+  cout << "Before bit set " << this->readBit(this->dMap, 3) << endl;
 	
-	//if data not allocated
-	for(int i = 0; i < 12 ; i++){
-		if(currentBlock.ptrs[i] != 0){
-			allocatedDataBlocks.push_back(i);
-		}	
-	}
-	
-	if(allocatedDataBlocks.size() == 0 && currentBlock.indirect == 0 && startByte == 0){
-		int bytesWritten = 0;
-		int dBlock;
-		unsigned int index = 0;
-		int ptrsIndex = 0;
-		while(bytesWritten < numByte){
-			dBlock = this->findBlock();
-			if(dBlock == -1){
-				return -1;			
-			}
-			char* data = (char*) malloc(BYTE*B_SIZE);
-			this->readBlock(dBlock, data);
-			while(index < B_SIZE && bytesWritten < numByte){
-				data[index] = c;
-				bytesWritten++;
-				index++;
-				currentBlock.fileSize++;
-					
-			} 
-			this->setBit(dMap, dBlock, 1);
-			this->writeBlock(DMAP_POS,this->dMap);
-			fseek(fh, dBlock * B_SIZE, SEEK_SET);
- 			fwrite(data, sizeof(char), numByte, fh);
-			currentBlock.ptrs[ptrsIndex] = dBlock;
-			fseek(fh, B_SIZE*filePos, SEEK_SET);
-			cout << "FILE SIZE: " << currentBlock.fileSize;
-			fwrite(&currentBlock, sizeof(currentBlock), 1, fh);
-			index = 0;		
-		}
-	}
-	else{
-		cout << "FILE SIZE: " << currentBlock.fileSize;
-		if(startByte > currentBlock.fileSize){
-			cout << "Exit" << endl;
-			return -1;			
-		}
-		int offset = startByte % sb.blockSize;
-		int blockNumber = startByte/sb.blockSize;
-		int ptrsIndex = -1;
-		if(blockNumber < 12){
-			blockNumber = allocatedDataBlocks[blockNumber];
-			int bytesWritten = 0;
-			int dBlock = blockNumber;
-			unsigned int index = offset;
-			while(bytesWritten < numByte){
-				char* data = (char*) malloc(BYTE*B_SIZE);
-				this->readBlock(dBlock, data);
-				while(index < B_SIZE && bytesWritten < numByte){
-				
-					data[index] = c;
-					bytesWritten++;
-					index++;
-					currentBlock.fileSize++;
-					
-				}
-				this->setBit(iMap, dBlock, 1);
-				this->writeBlock(DMAP_POS,this->dMap);
-				fseek(fh, dBlock * B_SIZE, SEEK_SET);
-	 			fwrite(data, sizeof(char), numByte, fh);	
-				for(int i = 0; i < 12; i++){
-					if(currentBlock.ptrs[i] == 0){
-						ptrsIndex = i;					
-					}
-				}
-				if(index >= B_SIZE && bytesWritten < numByte && ptrsIndex != -1){
-					dBlock = this->findBlock();
-					if(dBlock == -1){
-						cout << "Exit2" << endl;
-						return -1;			
-					}
-					offset = 0;
-					currentBlock.ptrs[ptrsIndex] = dBlock; 	
-				}
-				else{
-									
-				}	
-			}			
-		}
-	}
-	//if data is allocated
-	
-	
-	
-	return 1;
+  inode_t inode;
+  fseek(fh, filePos * B_SIZE, SEEK_SET);	
+  fread(&inode, sizeof(inode_t), 1, fh);
+  
+  unsigned int index = (unsigned int) startByte/B_SIZE;
+  unsigned int end_index = (unsigned int) (startByte + numByte)/B_SIZE;
+  unsigned int byte_index = (unsigned int) startByte % B_SIZE;
+  unsigned int end_byte_index = (unsigned int) (startByte + numByte) % B_SIZE;
+
+  if(end_index > D_POINTER){
+    cout << "OUT OF MEMORY" << endl;
+    return -1; 
+  }
+
+  for(unsigned int i = index; i < (end_index + (end_byte_index > 0)); i++){
+    //Assume position 0 in dMap is always 0
+    if(!this->readBit(this->dMap, inode.ptrs[i])){
+      inode.ptrs[i] = findEmptyBlock();
+      this->setBit(this->dMap, inode.ptrs[i], 1);
+    }
+  }
+
+  //front
+  char* f_block = (char*)malloc(BYTE * B_SIZE);
+  if(byte_index > 0){
+    this->writeBlock(f_block,index);
+  }
+  for(unsigned int i = byte_index; i < B_SIZE; i++){
+    f_block[i] = c;
+  }
+
+  //regular
+  char* d_block = (char*)malloc(BYTE * B_SIZE);
+  for(unsigned int i = 0; i < B_SIZE; i++){
+    d_block[i] = c;
+  }
+
+  //end
+  char* e_block = (char*)malloc(BYTE * B_SIZE);
+  if(end_byte_index > 0){
+    this->writeBlock(f_block,index);
+  }
+  for(unsigned int i = 0; i < end_byte_index; i++){
+    e_block[i] = c;
+  }
+
+  for(unsigned int i = index; i < (end_index + (end_byte_index > 0)?1:0); i++){
+    char* type_block = d_block;
+    if(i == index){
+      type_block = f_block;
+    }else if(i == end_index){
+      type_block = e_block;
+    }
+    this->writeBlock(type_block, inode.ptrs[i]);
+  }
+
+  inode.fileSize += numByte;
+
+  fseek(fh, filePos * B_SIZE, SEEK_SET);
+  fwrite(&inode, BYTE, B_SIZE, fh);
+
+  cout << "After bit set " << this->readBit(this->dMap, 3) << endl;
+  
+  return 1;
 }
 
 int Controller::findPosition(string filename){
-	inode_t currentBlock;
-	fseek(fh, B_SIZE * 3, SEEK_SET);
-	bool isEqual = false;
-	for(int i = 3; i < INODE_MAX; i++){
-		fread(&currentBlock, sizeof(inode_t), 1, fh);
-		fseek(fh, i * B_SIZE, SEEK_SET);
+  inode_t currentBlock;
+  fseek(fh, B_SIZE * 3, SEEK_SET);
+  bool isEqual = false;
+  for(int i = 3; i < INODE_MAX; i++){
+    fread(&currentBlock, sizeof(inode_t), 1, fh);
+    fseek(fh, i * B_SIZE, SEEK_SET);
 
-		if(this->readBit(this->iMap, i)){
-     		string s(currentBlock.fileName);
-			if(s.compare(filename) == 0){
-				isEqual = true;
-			}	
-		}
-      	if(isEqual){		
-			return i;	
-      	}    
-  	}	
+    if(this->readBit(this->iMap, i)){
+      string s(currentBlock.fileName);
+      if(s.compare(filename) == 0){
+	isEqual = true;
+      }	
+    }
+    if(isEqual){		
+      return i;	
+    }    
+  }	
 
-	return -1;
+  return -1;
 }
 
-int Controller::findBlock(){
-	for(int i = 259; i < sb.numBlocks; i++){
-		if(!this->readBit(this->dMap, i)){
-			return i;		
-		}
-	}
-	return -1;
+int Controller::findEmptyBlock(){
+  for(int i = 259; i < sb.numBlocks; i++){
+    if(!this->readBit(this->dMap, i)){
+      return i;		
+    }
+  }
+  return -1;
 }
 
 
@@ -261,28 +237,18 @@ int Controller::read(string filename, int startByte, int numByte){
 
   char* data_block = (char*)malloc(BYTE * B_SIZE);
 
-  unsigned int cal_start = (unsigned int)startByte/B_SIZE;
-  unsigned int start_byte = (unsigned int)startByte % B_SIZE;
-  unsigned int num_block = (unsigned int)numByte/B_SIZE;
+  unsigned int index = (unsigned int)startByte/B_SIZE;
+  unsigned int byte_index = (unsigned int)startByte % B_SIZE;
+  unsigned int num_block = 1;
 
-  
-  if((numByte % B_SIZE) > 0){
-    num_block++;
-  }
-
-  if(cal_start > D_POINTER || inode.fileSize < (int)(cal_start + num_block)){
-    return -1;
-  }
-  
-  for(unsigned int i = cal_start; i < cal_start + num_block && i < D_POINTER; i++){
-    if(this->readBit(this->dMap, inode.ptrs[i])){
-      this->readBlock(inode.ptrs[i], data_block);
-      cout << data_block[start_byte++];
-      start_byte %= B_SIZE;
-    }else{
-      break;
+  this->readBlock(data_block, index);
+  for(unsigned int i = startByte; i < startByte + numByte; i++){
+    cout << data_block[i%B_SIZE];
+    if((i % B_SIZE) == 0){
+      this->readBlock(data_block, index + num_block++);
     }
-  }  
+  }
+  cout << endl;
   
   return 1;
 
@@ -307,8 +273,8 @@ int Controller::list(){
 }
 
 int Controller::shutdown(){
-  	fclose(fh);
-	return -1;
+  fclose(fh);
+  return -1;
 }
 
 void Controller::createInode(const char* name, int index){
@@ -347,7 +313,7 @@ void Controller::setBit(char* a, unsigned int bit_pos, bool set_value){
 
 
 //Assume data points to a char array of size blockSize
-int Controller::writeBlock(unsigned int block_pos, char* data){
+int Controller::writeBlock(char* data, unsigned int block_pos){
   if(data == NULL || fh == NULL){
     return -1;
   }
@@ -363,7 +329,7 @@ int Controller::writeBlock(unsigned int block_pos, char* data){
   return 1;
 }
 
-int Controller::readBlock(unsigned int block_pos, char* data){
+int Controller::readBlock(char* data, unsigned int block_pos){
   if(data == NULL || fh == NULL){
     return -1;
   }

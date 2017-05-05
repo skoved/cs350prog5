@@ -27,4 +27,8 @@ controller.o: controller.cpp
 inode.o: inode.cpp
 	$(CXX) $(CXXFLAGS) -c -g inode.cpp
 clean: 
-	rm $(OBJ) $(OBJ2) ssfs ssfs_mkdsk
+	rm $(OBJ) $(OBJ2) ssfs ssfs_mkdsk *.ssfs
+test:
+	make;
+	./ssfs_mkdsk 1024 128 disk.txt;
+	./ssfs disk.txt thing;
