@@ -87,8 +87,90 @@ int Controller::remove(string filename){
 
 int Controller::write(string filename, char c, int startByte, int numByte){
 	int filePos = this->findPosition(filename);
-	char* currentBlock = (char*)malloc(BYTE * B_SIZE);	
-  	this->readBlock(filePos, currentBlock);
+	inode_t currentBlock;
+	fseek(fh, filePos * B_SIZE, SEEK_SET);	
+  	fread(&currentBlock, sizeof(inode_t), 1, fh);
+	vector<int> allocatedDataBlocks;
+	
+	//if data not allocated
+	for(int i = 0; i < 12 ; i++){
+		if(currentBlock.ptrs[i] != 0){
+			allocatedDataBlocks.push_back(i);
+		}	
+	}
+	if(allocatedDataBlocks.size() == 0 && currentBlock.indirect == 0 && startByte == 0){
+		int bytesWritten = 0;
+		int dBlock;
+		unsigned int index = 0;
+		while(bytesWritten < numByte){
+			dBlock = this->findBlock();
+			if(dBlock == -1){
+				return -1;			
+			}
+			char* data = (char*) malloc(BYTE*B_SIZE);
+			this->readBlock(dBlock, data);
+			while(index < B_SIZE && bytesWritten < numByte){
+				
+				data[index] = c;
+				bytesWritten++;
+				index++;
+					
+			} 
+			this->setBit(iMap, dBlock, 1);
+			this->writeBlock(DMAP_POS,this->dMap);
+			fseek(fh, dBlock * B_SIZE, SEEK_SET);
+ 			fwrite(data, sizeof(char), numByte, fh);		
+		}
+	}
+	else{
+		if(startByte > currentBlock.fileSize){
+			return -1;			
+		}
+		int offset = startByte % sb.blockSize;
+		int blockNumber = startByte/sb.blockSize;
+		int ptrsIndex = -1;
+		if(blockNumber < 12){
+			blockNumber = allocatedDataBlocks[blockNumber];
+			int bytesWritten = 0;
+			int dBlock = blockNumber;
+			unsigned int index = offset;
+			while(bytesWritten < numByte){
+				char* data = (char*) malloc(BYTE*B_SIZE);
+				this->readBlock(dBlock, data);
+				while(index < B_SIZE && bytesWritten < numByte){
+				
+					data[index] = c;
+					bytesWritten++;
+					index++;
+					
+				}
+				this->setBit(iMap, dBlock, 1);
+				this->writeBlock(DMAP_POS,this->dMap);
+				fseek(fh, dBlock * B_SIZE, SEEK_SET);
+	 			fwrite(data, sizeof(char), numByte, fh);	
+				for(int i = 0; i < 12; i++){
+					if(currentBlock.ptrs[i] == 0){
+						ptrsIndex = i;					
+					}
+				}
+				if(index >= B_SIZE && bytesWritten < numByte && ptrsIndex != -1){
+					dBlock = this->findBlock();
+					if(dBlock == -1){
+						return -1;			
+					}
+					offset = 0;
+					currentBlock.ptrs[ptrsIndex] = dBlock; 	
+				}
+				else{
+									
+				}	
+			}			
+		}
+	}
+	//if data is allocated
+
+	
+	
 	return -1;
 }
 
@@ -111,6 +193,16 @@ int Controller::findPosition(string filename){
 
 	return -1;
 }
+
+int Controller::findBlock(){
+	for(int i = 259; i < sb.numBlocks; i++){
+		if(!this->readBit(this->dMap, i)){
+			return i;		
+		}
+	}
+	return -1;
+}
+
 
 vector<string> Controller::read(string filename, int startByte, int numByte){
   return vector<string>();

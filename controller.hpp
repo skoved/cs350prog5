@@ -81,5 +81,7 @@ public:
   int readBlock(unsigned int block_pos, char* data);
 
   int findPosition(std::string filename);
+
+  int findBlock();	
 };
 #endif
