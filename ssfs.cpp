@@ -13,6 +13,8 @@
 #include "diskop.hpp"
 #include "superblock.h"
 
+#define RUN_NUM 1
+
 using namespace std;
 
 void *user_model(void *arg);
@@ -25,19 +27,44 @@ int main(int argc, char **argv){
     
     string filename(argv[1]);
     Controller disk(filename, 1);
-    string butt = "butts";
-    int status = disk.create(butt);
-    if (status == -1){
-        perror("Create is bad\n");
-    }
-	
-	cout << "FINISHED CREATE" << endl;
-	status = disk.write(butt, '5', 2, 1);
-	if (status == -1){
+    string butt = "butt";
+    int status = 0;
+    
+    switch(RUN_NUM){
+    case 0:
+      status =  disk.create(butt);
+      if (status == -1){
+	perror("Create is bad\n");
+      }
+      status = disk.write(butt, 'H', 1, 5);
+      if (status == -1){
         perror("Write is bad\n");
+      }
+      disk.cat(butt);
+      disk.read(butt, 1, 5);
+      cout << endl;
+      disk.write(butt, 'G', 2, 5);
+      break;
+    case 1:
+      butt = "ass";
+      status =  disk.create(butt);
+      if (status == -1){
+	perror("Create is bad\n");
+      }
+      status = disk.write(butt, 'A', 1, 5);
+      if (status == -1){
+        perror("Write is bad\n");
+      }
+      disk.cat(butt);
+      disk.read(butt, 1, 5);
+      cout << endl;
+      disk.write(butt, 'S', 2, 5);
+      break;
     }
-	disk.cat(butt);
-	disk.shutdown();
+    disk.cat(butt);    
+    disk.list();
+
+    disk.shutdown();
     
 
     

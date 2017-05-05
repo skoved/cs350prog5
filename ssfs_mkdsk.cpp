@@ -43,7 +43,7 @@ int main(int agrc, char **argv){
   */
   //create file and write out to it
   FILE * ssfs;
-  ssfs = fopen(argv[3], "wb");
+  ssfs = fopen(argv[3], "wb+");
   
 
   //determine remaining size of the file
