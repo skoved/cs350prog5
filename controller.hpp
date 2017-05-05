@@ -1,7 +1,9 @@
 #ifndef CONTROLLER_HPP
 #define CONTROLLER_HPP
 
+
 #include <errno.h>
+#include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string>
@@ -22,6 +24,8 @@
 #define BYTE sizeof(char)
 #define INODE_MAX 256
 #define NAME_SIZE 32
+#define D_POINTER 12
+
 #define handle_error(msg)			\
   do{						\
     perror(msg);				\

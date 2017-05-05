@@ -113,7 +113,39 @@ int Controller::findPosition(string filename){
 }
 
 int Controller::read(string filename, int startByte, int numByte){
-  return -1;
+  int inode_pos = this->findPosition(filename);
+  inode_t inode;
+
+  fseek(fh, inode_pos * B_SIZE, SEEK_SET);
+  fread(&inode, sizeof(inode_t), 1, fh);
+  rewind(fh);
+
+  char* data_block = (char*)malloc(BYTE * B_SIZE);
+
+  unsigned int cal_start = (unsigned int)startByte/B_SIZE;
+  unsigned int start_byte = (unsigned int)startByte % B_SIZE;
+  unsigned int num_block = (unsigned int)numByte/B_SIZE;
+
+  
+  if((numByte % B_SIZE) > 0){
+    num_block++;
+  }
+
+  if(cal_start > D_POINTER || inode.fileSize < (int)(cal_start + num_block)){
+    return -1;
+  }
+  
+  for(unsigned int i = cal_start; i < cal_start + num_block && i < D_POINTER; i++){
+    if(this->readBit(this->dMap, inode.ptrs[i])){
+      this->readBlock(inode.ptrs[i], data_block);
+      cout << data_block[start_byte++];
+      start_byte %= B_SIZE;
+    }else{
+      break;
+    }
+  }  
+  
+  return 1;
 }
 
 int Controller::list(string filename){
