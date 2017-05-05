@@ -88,7 +88,6 @@ int Controller::cat(string filename){
   char* data_block = (char*)malloc(BYTE * B_SIZE);
 
   unsigned int cal_start = 0;
-  unsigned int start_byte = 0;
   unsigned int num_block = inode.fileSize;
 
   if(num_block == 0){
@@ -160,7 +159,6 @@ int Controller::write(string filename, char c, int startByte, int numByte){
 	else{
 		cout << "FILE SIZE: " << currentBlock.fileSize;
 		if(startByte > currentBlock.fileSize){
-			cout << "Exit" << endl;
 			return -1;			
 		}
 		int offset = startByte % sb.blockSize;
