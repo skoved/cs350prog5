@@ -22,16 +22,18 @@ int main(int argc, char **argv){
         perror("Run as ./ssfs <disk file> <threadops files>\nCan enter up to four thread ops files\n");
         return 0;
     }
-
-    //open file
-    FILE *ssfs = fopen(argv[1], "rb+");
-    if(ssfs == NULL){
-        perror("ABORT\n");
-        return 0;
+    
+    string filename(argv[1]);
+    Controller disk(filename, 1);
+    string butt = "butts";
+    int status = disk.create(butt);
+    if (status == -1){
+        perror("Create is bad\n");
     }
+    
 
-    superblock_t sb;
-    fread(&sb, sizeof(superblock_t), 1, ssfs);
+    
+    
     
 
     return 0;
