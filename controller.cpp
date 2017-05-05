@@ -120,7 +120,7 @@ int Controller::cat(string filename){
     if(this->readBit(this->dMap, inode.ptrs[i])){
       this->readBlock(data_block, inode.ptrs[i]);
       for(; readPos<inode.fileSize && readPos<sb.blockSize; readPos++)
-      	cout << (int)data_block[readPos%sb.blockSize];
+      	cout << (char)data_block[readPos%sb.blockSize];
     }else{
       break;
     }
