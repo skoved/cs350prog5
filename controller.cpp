@@ -33,6 +33,11 @@ Controller::Controller(std::string filename, unsigned int buffer_size){
     imap[i] = 0;
     dmap[i] = 0;
   }
+
+  fseek(fh, B_SIZE * IMAP_POS, SEEK_SET);
+  fread(&iMap, sizeof(char), B_SIZE, fh);
+  fseek(fh, B_SIZE * DMAP_POS, SEEK_SET);
+  fread(&dMap, sizeof(char), B_SIZE, fh);
 	
   this->writeBlock(IMAP_POS, imap);
   this->writeBlock(DMAP_POS, dmap); 
