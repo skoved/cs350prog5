@@ -142,6 +142,7 @@ int Controller::write(string filename, char c, int startByte, int numByte){
 				data[index] = c;
 				bytesWritten++;
 				index++;
+				currentBlock.fileSize++;
 					
 			} 
 			this->setBit(iMap, dBlock, 1);
@@ -170,6 +171,7 @@ int Controller::write(string filename, char c, int startByte, int numByte){
 					data[index] = c;
 					bytesWritten++;
 					index++;
+					currentBlock.fileSize++;
 					
 				}
 				this->setBit(iMap, dBlock, 1);
