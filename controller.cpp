@@ -117,7 +117,27 @@ int Controller::cat(string filename){
 }
 
 int Controller::remove(string filename){
-  return -1;
+  int filePos = this->findPosition(filename);
+  if(filePos == -1){
+    return -1;
+  }
+
+  inode_t inode;
+  fseek(fh, filePos, SEEK_SET);
+  fread(&inode, sizeof(inode_t), 1, fh);
+
+  char* empty_block = (char*)malloc(BYTE * B_SIZE);
+  for(unsigned int i = 0; i < B_SIZE; i++){
+    empty_block[i] = 0;
+  }
+  
+  for(unsigned int i = 0; i < D_POINTER; i++){
+    this->setBit(this->dMap, inode.ptrs[i], 0);
+    this->writeBlock(empty_block, inode.ptrs[i]);
+  }
+
+  this->setBit(this->iMap, filePos, 0);
+  return 1;
 }
 
 int Controller::write(string filename, char c, int startByte, int numByte){
@@ -273,6 +293,8 @@ int Controller::list(){
 }
 
 int Controller::shutdown(){
+  this->writeBlock(this->iMap, IMAP_POS);
+  this->writeBlock(this->dMap, DMAP_POS);
   fclose(fh);
   return -1;
 }
