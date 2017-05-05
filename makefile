@@ -31,4 +31,13 @@ clean:
 test:
 	make;
 	./ssfs_mkdsk 1024 128 disk.txt;
+	cp disk.txt store.txt;
 	./ssfs disk.txt thing;
+	diff disk.txt store.txt;
+
+test2:
+	./ssfs disk.txt thing;
+	diff disk.txt store.txt;
+
+gdb: ssfs
+	gdb --args ssfs disk.txt t;

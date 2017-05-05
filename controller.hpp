@@ -16,9 +16,6 @@
 #include "inode.h"
 #include "superblock.h"
 
-#define SUPER_POS 0
-#define IMAP_POS 1
-#define DMAP_POS 2
 
 #define B_SIZE (unsigned int)sb.blockSize
 #define BYTE sizeof(char)
@@ -26,7 +23,7 @@
 #define NAME_SIZE 32
 #define D_POINTER 12
 
-#define MAX_DBLOCK 64
+#define MAX_DBLOCK sb.numBlocks
 #define ADDR_START 259
 
 #define handle_error(msg)			\
@@ -38,6 +35,8 @@
 #define SUPER_POS 0
 #define IMAP_POS 1
 #define DMAP_POS 2
+#define INODE_POS 3
+#define DBLOC_POS 259
 
 #define SIZE (sizeof(unsigned int) * buffer_size)
 

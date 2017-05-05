@@ -13,6 +13,8 @@
 #include "diskop.hpp"
 #include "superblock.h"
 
+#define SEC_RUN 1
+
 using namespace std;
 
 void *user_model(void *arg);
@@ -25,21 +27,26 @@ int main(int argc, char **argv){
     
     string filename(argv[1]);
     Controller disk(filename, 1);
-    string butt = "butts";
-    int status = disk.create(butt);
-    if (status == -1){
-        perror("Create is bad\n");
-    }
-	status = disk.write(butt, 'H', 1, 5);
-	if (status == -1){
+    string butt = "butt";
+    if(!SEC_RUN){
+      int status =  disk.create(butt);
+      if (status == -1){
+	perror("Create is bad\n");
+      }
+      status = disk.write(butt, 'H', 1, 5);
+      if (status == -1){
         perror("Write is bad\n");
+      }
+      disk.cat(butt);
+      disk.read(butt, 1, 5);
+      cout << endl;
+      
+      disk.write(butt, 'G', 2, 5);
     }
-	disk.cat(butt);
-	disk.read(butt, 1, 5);
-	cout << endl;
-	
-	disk.list();
-	disk.shutdown();
+    disk.cat(butt);
+    
+    disk.list();
+    disk.shutdown();
     
 
     
