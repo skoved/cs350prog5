@@ -44,14 +44,12 @@ int Controller::create(string filename){
 	if(filename.length() > 32)
 		return -1;
 	inode_t currentBlock;
-	fseek(fh, B_SIZE * 3, SEEK_SET);
 	int firstEmptyINode = 0;
 	bool isEqual = false;
 	for(int i = 3; i < INODE_MAX; i++){
-		fread(&currentBlock, sizeof(inode_t), 1, fh);
-		fseek(fh, i+1 * B_SIZE, SEEK_SET);
-
+		fseek(fh, i * B_SIZE, SEEK_SET);
 		if(this->readBit(this->iMap, i)){
+			fread(&currentBlock, sizeof(inode_t), 1, fh);
      		string s(currentBlock.fileName);
 			isEqual=(s.compare(filename))?true:false;	
 		}
