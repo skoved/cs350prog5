@@ -320,9 +320,9 @@ void Controller::setBit(char* a, unsigned int bit_pos, bool set_value){
     return;
   }
   if(set_value){
-    a[index] = a[index] | (1 << bit_index);
+    a[index] |= (1 << bit_index);
   }else{
-    a[index] & ~(1 << bit_index);
+    a[index] &= ~(1 << bit_index);
   }
 }
 
