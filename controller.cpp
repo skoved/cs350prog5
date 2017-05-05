@@ -34,8 +34,8 @@ Controller::Controller(std::string filename, unsigned int buffer_size){
     dmap[i] = 0;
   }
 	
-  this->writeBlock(1, imap);
-  this->writeBlock(2, dmap); 
+  this->writeBlock(IMAP_POS, imap);
+  this->writeBlock(DMAP_POS, dmap); 
   this->iMap = imap;
   this->dMap = dmap;
 }
@@ -88,6 +88,7 @@ int Controller::cat(string filename){
   char* data_block = (char*)malloc(BYTE * B_SIZE);
 
   unsigned int cal_start = 0;
+  unsigned int start_byte = 0;
   unsigned int num_block = inode.fileSize;
 
   if(num_block == 0){
@@ -159,6 +160,7 @@ int Controller::write(string filename, char c, int startByte, int numByte){
 	else{
 		cout << "FILE SIZE: " << currentBlock.fileSize;
 		if(startByte > currentBlock.fileSize){
+			cout << "Exit" << endl;
 			return -1;			
 		}
 		int offset = startByte % sb.blockSize;
@@ -281,8 +283,22 @@ int Controller::read(string filename, int startByte, int numByte){
 
 }
 
-int Controller::list(string filename){
-  return -1;
+int Controller::list(){
+  inode_t inode;
+  for(unsigned int i = 0; i < INODE_MAX; i++){
+    if(this->readBit(this->iMap, i)){
+      fseek(fh, i * B_SIZE, SEEK_SET);
+      fread(&inode, sizeof(inode_t), 1, fh);
+      rewind(fh);
+      string filename = "";
+      for(unsigned int j = 0; j < 33 && inode.fileName[j] != '\0'; j++){
+	filename.insert(filename.end(), inode.fileName[j]);
+      }
+      cout << "File " << filename << " of size: " << inode.fileSize << endl;
+    }
+  }
+  
+  return 1;
 }
 
 int Controller::shutdown(){

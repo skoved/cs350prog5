@@ -70,7 +70,7 @@ public:
 
   int read(std::string filename, int startByte, int numByte);
 
-  int list(std::string filename);
+  int list();
 
   int shutdown(); 
 
