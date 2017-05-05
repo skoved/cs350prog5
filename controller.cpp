@@ -72,7 +72,16 @@ int Controller::create(string filename){
 }
 
 int Controller::import(string filename, string unix_filename){
-  return -1;
+  int file_pos = this->findPosition(filename);
+  if(file_pos == -1){
+    return -1;
+  }
+
+  inode_t inode;
+  fseek(fh, file_pos * B_SIZE, SEEK_SET);
+  fread(&inode, BYTE, B_SIZE, fh);
+  
+  return 1;
 }
 
 
@@ -123,7 +132,7 @@ int Controller::remove(string filename){
   }
 
   inode_t inode;
-  fseek(fh, filePos, SEEK_SET);
+  fseek(fh, filePos * B_SIZE, SEEK_SET);
   fread(&inode, sizeof(inode_t), 1, fh);
 
   char* empty_block = (char*)malloc(BYTE * B_SIZE);
