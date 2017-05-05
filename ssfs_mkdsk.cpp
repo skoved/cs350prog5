@@ -44,17 +44,20 @@ int main(int agrc, char **argv){
   //create file and write out to it
   FILE * ssfs;
   ssfs = fopen(argv[3], "wb");
+  
 
   //determine remaining size of the file
-  int fremain = blockSize * numBlocks - sizeof(superblock_t);
+  int fremain = blockSize * numBlocks;
   char *data = (char*) malloc(fremain);
   for(int i=0; i<fremain; i++){
     data[i] = 0;
   }
   if( ssfs != NULL){
-    fwrite(&dumb, sizeof(superblock_t), 1, ssfs);
-    fwrite(data, fremain, 1, ssfs);
-    //fclose(ssfs);
+	fseek(ssfs, 0, SEEK_SET);
+    fwrite(data, sizeof(char), fremain, ssfs);
+	fseek(ssfs, 0, SEEK_SET);
+    fwrite(&dumb, sizeof(dumb), 1, ssfs);
+    fclose(ssfs);
   }
   else{
     cerr << "cannot create file system :(" << endl;

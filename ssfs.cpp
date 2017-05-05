@@ -30,6 +30,14 @@ int main(int argc, char **argv){
     if (status == -1){
         perror("Create is bad\n");
     }
+	
+	cout << "FINISHED CREATE" << endl;
+	status = disk.write(butt, '5', 2, 1);
+	if (status == -1){
+        perror("Write is bad\n");
+    }
+	disk.cat(butt);
+	disk.shutdown();
     
 
     

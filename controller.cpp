@@ -13,7 +13,7 @@ Controller::Controller(std::string filename, unsigned int buffer_size){
     handle_error("shm open");
   }
 
-  fh = fopen(filename.c_str(), "wb+");
+  fh = fopen(filename.c_str(), "rb+");
   if(fh == NULL){
     handle_error("file open");
   }
@@ -51,7 +51,8 @@ int Controller::create(string filename){
 		if(this->readBit(this->iMap, i)){
 			fread(&currentBlock, sizeof(inode_t), 1, fh);
      		string s(currentBlock.fileName);
-			isEqual=(s.compare(filename))?true:false;	
+			if(s.compare(filename) == 0)
+				isEqual = true;
 		}
       	if(isEqual){		
 			return -1;	
@@ -93,12 +94,13 @@ int Controller::cat(string filename){
   if(num_block == 0){
     return 1;
   }
-
-  for(unsigned int i = cal_start; i < num_block; i++){
+  int readPos = 0;
+  for(unsigned int i = cal_start; i < 12; i++){
     if(this->readBit(this->dMap, inode.ptrs[i])){
       this->readBlock(inode.ptrs[i], data_block);
-      cout << data_block[start_byte++];
-      start_byte %= B_SIZE;
+	  for(; readPos<inode.fileSize && readPos<sb.blockSize; readPos++)
+      	cout << data_block[readPos%sb.blockSize];
+		
     }else{
       break;
     }
@@ -128,6 +130,7 @@ int Controller::write(string filename, char c, int startByte, int numByte){
 		int bytesWritten = 0;
 		int dBlock;
 		unsigned int index = 0;
+		int ptrsIndex = 0;
 		while(bytesWritten < numByte){
 			dBlock = this->findBlock();
 			if(dBlock == -1){
@@ -136,21 +139,27 @@ int Controller::write(string filename, char c, int startByte, int numByte){
 			char* data = (char*) malloc(BYTE*B_SIZE);
 			this->readBlock(dBlock, data);
 			while(index < B_SIZE && bytesWritten < numByte){
-				
 				data[index] = c;
 				bytesWritten++;
 				index++;
 				currentBlock.fileSize++;
 					
 			} 
-			this->setBit(iMap, dBlock, 1);
+			this->setBit(dMap, dBlock, 1);
 			this->writeBlock(DMAP_POS,this->dMap);
 			fseek(fh, dBlock * B_SIZE, SEEK_SET);
- 			fwrite(data, sizeof(char), numByte, fh);		
+ 			fwrite(data, sizeof(char), numByte, fh);
+			currentBlock.ptrs[ptrsIndex] = dBlock;
+			fseek(fh, B_SIZE*filePos, SEEK_SET);
+			cout << "FILE SIZE: " << currentBlock.fileSize;
+			fwrite(&currentBlock, sizeof(currentBlock), 1, fh);
+			index = 0;		
 		}
 	}
 	else{
+		cout << "FILE SIZE: " << currentBlock.fileSize;
 		if(startByte > currentBlock.fileSize){
+			cout << "Exit" << endl;
 			return -1;			
 		}
 		int offset = startByte % sb.blockSize;
@@ -184,6 +193,7 @@ int Controller::write(string filename, char c, int startByte, int numByte){
 				if(index >= B_SIZE && bytesWritten < numByte && ptrsIndex != -1){
 					dBlock = this->findBlock();
 					if(dBlock == -1){
+						cout << "Exit2" << endl;
 						return -1;			
 					}
 					offset = 0;
@@ -196,10 +206,10 @@ int Controller::write(string filename, char c, int startByte, int numByte){
 		}
 	}
 	//if data is allocated
-
 	
 	
-	return -1;
+	
+	return 1;
 }
 
 int Controller::findPosition(string filename){
@@ -212,7 +222,9 @@ int Controller::findPosition(string filename){
 
 		if(this->readBit(this->iMap, i)){
      		string s(currentBlock.fileName);
-			isEqual=(s.compare(filename))?true:false;	
+			if(s.compare(filename) == 0){
+				isEqual = true;
+			}	
 		}
       	if(isEqual){		
 			return i;	
@@ -274,15 +286,15 @@ int Controller::list(string filename){
   return -1;
 }
 
-int Controller::shutdown(struct superblock fileSys, string filename){
-  return -1;
+int Controller::shutdown(){
+  	fclose(fh);
+	return -1;
 }
 
 void Controller::createInode(const char* name, int index){
   inode_t node;
   inode_init( &node, name);
-  rewind(fh);
-  fseek(fh, index * B_SIZE, SEEK_CUR);
+  fseek(fh, index * B_SIZE, SEEK_SET);
   fwrite(&node, sizeof(node), 1, fh);
 	 
 }

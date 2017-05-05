@@ -72,7 +72,7 @@ public:
 
   int list(std::string filename);
 
-  int shutdown(struct superblock fileSys, std::string filename); 
+  int shutdown(); 
 
   void createInode(const char* name, int index);
 
