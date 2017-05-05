@@ -1,7 +1,9 @@
 #ifndef CONTROLLER_HPP
 #define CONTROLLER_HPP
 
+
 #include <errno.h>
+#include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string>
@@ -22,6 +24,8 @@
 #define BYTE sizeof(char)
 #define INODE_MAX 256
 #define NAME_SIZE 32
+#define D_POINTER 12
+
 #define handle_error(msg)			\
   do{						\
     perror(msg);				\
@@ -64,9 +68,9 @@ public:
 
   int write(std::string fielname, char c, int startByte, int numByte);
 
-  std::vector<std::string> read(std::string filename, int startByte, int numByte);
+  int read(std::string filename, int startByte, int numByte);
 
-  std::vector<std::string> list(std::string filename);
+  int list(std::string filename);
 
   int shutdown(struct superblock fileSys, std::string filename); 
 

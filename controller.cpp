@@ -77,8 +77,36 @@ int Controller::import(string filename, string unix_filename){
   return -1;
 }
 
+
 int Controller::cat(string filename){
-  return -1;
+  int inode_pos = this->findPosition(filename);
+  inode_t inode;
+
+  fseek(fh, inode_pos * B_SIZE, SEEK_SET);
+  fread(&inode, sizeof(inode_t), 1, fh);
+  rewind(fh);
+
+  char* data_block = (char*)malloc(BYTE * B_SIZE);
+
+  unsigned int cal_start = 0;
+  unsigned int start_byte = 0;
+  unsigned int num_block = inode.fileSize;
+
+  if(num_block == 0){
+    return 1;
+  }
+
+  for(unsigned int i = cal_start; i < num_block; i++){
+    if(this->readBit(this->dMap, inode.ptrs[i])){
+      this->readBlock(inode.ptrs[i], data_block);
+      cout << data_block[start_byte++];
+      start_byte %= B_SIZE;
+    }else{
+      break;
+    }
+  }  
+  
+  return 1;
 }
 
 int Controller::remove(string filename){
@@ -204,12 +232,46 @@ int Controller::findBlock(){
 }
 
 
-vector<string> Controller::read(string filename, int startByte, int numByte){
-  return vector<string>();
+
+int Controller::read(string filename, int startByte, int numByte){
+  int inode_pos = this->findPosition(filename);
+  inode_t inode;
+
+  fseek(fh, inode_pos * B_SIZE, SEEK_SET);
+  fread(&inode, sizeof(inode_t), 1, fh);
+  rewind(fh);
+
+  char* data_block = (char*)malloc(BYTE * B_SIZE);
+
+  unsigned int cal_start = (unsigned int)startByte/B_SIZE;
+  unsigned int start_byte = (unsigned int)startByte % B_SIZE;
+  unsigned int num_block = (unsigned int)numByte/B_SIZE;
+
+  
+  if((numByte % B_SIZE) > 0){
+    num_block++;
+  }
+
+  if(cal_start > D_POINTER || inode.fileSize < (int)(cal_start + num_block)){
+    return -1;
+  }
+  
+  for(unsigned int i = cal_start; i < cal_start + num_block && i < D_POINTER; i++){
+    if(this->readBit(this->dMap, inode.ptrs[i])){
+      this->readBlock(inode.ptrs[i], data_block);
+      cout << data_block[start_byte++];
+      start_byte %= B_SIZE;
+    }else{
+      break;
+    }
+  }  
+  
+  return 1;
+
 }
 
-vector<string> Controller::list(string filename){
-  return vector<string>();
+int Controller::list(string filename){
+  return -1;
 }
 
 int Controller::shutdown(struct superblock fileSys, string filename){
