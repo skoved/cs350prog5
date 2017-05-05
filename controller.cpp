@@ -74,6 +74,8 @@ int Controller::create(string filename){
 }
 
 int Controller::import(string filename, string unix_filename){
+  //if filename doesn't exist in ssfs, create filename to hold unix_filename
+  
   return -1;
 }
 
@@ -121,6 +123,12 @@ int Controller::list(string filename){
 }
 
 int Controller::shutdown(struct superblock fileSys, string filename){
+  //flush and save
+  fseek(fh, B_SIZE, SEEK_SET);
+  fwrite(iMap, sizeof(iMap), 1 , fh);
+  fseek(fh, B_SIZE * 2, SEEK_SET);
+  fwrite(dMap, sizeof(dMap), 1 , fh);
+  fclose(fh);
   return -1;
 }
 
