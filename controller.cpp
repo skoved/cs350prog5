@@ -125,6 +125,7 @@ int Controller::write(string filename, char c, int startByte, int numByte){
 			allocatedDataBlocks.push_back(i);
 		}	
 	}
+	
 	if(allocatedDataBlocks.size() == 0 && currentBlock.indirect == 0 && startByte == 0){
 		int bytesWritten = 0;
 		int dBlock;
@@ -317,9 +318,9 @@ void Controller::setBit(char* a, unsigned int bit_pos, bool set_value){
     return;
   }
   if(set_value){
-    a[index] |= (1 << bit_index);
+    a[index] = a[index] | (1 << bit_index);
   }else{
-    a[index] &= ~(1 << bit_index);
+    a[index] & ~(1 << bit_index);
   }
 }
 
