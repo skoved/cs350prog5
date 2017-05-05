@@ -74,13 +74,39 @@ int Controller::create(string filename){
 }
 
 int Controller::import(string filename, string unix_filename){
-  //if filename doesn't exist in ssfs, create filename to hold unix_filename
-  
   return -1;
 }
 
+
 int Controller::cat(string filename){
-  return -1;
+  int inode_pos = this->findPosition(filename);
+  inode_t inode;
+
+  fseek(fh, inode_pos * B_SIZE, SEEK_SET);
+  fread(&inode, sizeof(inode_t), 1, fh);
+  rewind(fh);
+
+  char* data_block = (char*)malloc(BYTE * B_SIZE);
+
+  unsigned int cal_start = 0;
+  unsigned int start_byte = 0;
+  unsigned int num_block = inode.fileSize;
+
+  if(num_block == 0){
+    return 1;
+  }
+
+  for(unsigned int i = cal_start; i < num_block; i++){
+    if(this->readBit(this->dMap, inode.ptrs[i])){
+      this->readBlock(inode.ptrs[i], data_block);
+      cout << data_block[start_byte++];
+      start_byte %= B_SIZE;
+    }else{
+      break;
+    }
+  }  
+  
+  return 1;
 }
 
 int Controller::remove(string filename){
@@ -155,12 +181,6 @@ int Controller::list(string filename){
 }
 
 int Controller::shutdown(struct superblock fileSys, string filename){
-  //flush and save
-  fseek(fh, B_SIZE, SEEK_SET);
-  fwrite(iMap, sizeof(iMap), 1 , fh);
-  fseek(fh, B_SIZE * 2, SEEK_SET);
-  fwrite(dMap, sizeof(dMap), 1 , fh);
-  fclose(fh);
   return -1;
 }
 
