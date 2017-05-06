@@ -238,7 +238,6 @@ int Controller::read(string filename, int startByte, int numByte){
     
     char* data_block = (char*)malloc(BYTE * B_SIZE);
 
-    //FIX: ADD check to make sure that inode.ptrs[index] is valid in dMap
     if(inode.ptrs[index] == 0 || !this->readBit(this->dMap, inode.ptrs[index])){
       free(data_block);
       return -1;
@@ -248,8 +247,8 @@ int Controller::read(string filename, int startByte, int numByte){
 
       cout << data_block[i%B_SIZE];
 
-      if((i % B_SIZE) == 0){
-	if(inode.ptrs[index + num_block] == 0 || !this->readBit(this->dMap, inode.ptrs[index + num_block])){
+      if((i % B_SIZE) == 0 && i != 0){
+	if((inode.ptrs[index + num_block] == 0) || !this->readBit(this->dMap, inode.ptrs[index + num_block])){
 	  free(data_block);
 	  cout << "Prematurely reached end of file"  << endl;
 	  return -1;
