@@ -86,14 +86,16 @@ int Controller::import(string filename, string unix_filename){
 
 
 int Controller::cat(string filename){
-  /* int inode_pos = this->findPosition(filename);
-  if
+  int inode_pos = this->findPosition(filename);
+  if(inode_pos == -1){
+    return -1;
+  }
     inode_t inode;
 
     fseek(fh, inode_pos * B_SIZE, SEEK_SET);
     fread(&inode, sizeof(inode_t), 1, fh);
     this->read(filename, 0, inode.fileSize);
-  */
+    
     return 1;
 }
 
@@ -232,7 +234,7 @@ int Controller::read(string filename, int startByte, int numByte){
 
       if((i % B_SIZE) == 0){
             this->readBlock(data_block, index + num_block++);
-        }
+      }
     }
     cout << endl;
 
