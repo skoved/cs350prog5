@@ -216,7 +216,7 @@ int Controller::write(string filename, char c, int startByte, int numByte){
     free(e_block);
     
     fseek(fh, filePos * B_SIZE, SEEK_SET);
-    fwrite(&inode, sizeof(inode_t), B_SIZE, fh);
+    fwrite(&inode, sizeof(inode_t), 1, fh);
 
     return 1;
 }
