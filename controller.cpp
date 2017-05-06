@@ -129,6 +129,7 @@ int Controller::remove(string filename){
 }
 
 int Controller::write(string filename, char c, int startByte, int numByte){
+  //Change all ternaries to safer assignments
     int filePos = this->findPosition(filename);
     if(filePos <= 0){
         return -1;
@@ -147,11 +148,15 @@ int Controller::write(string filename, char c, int startByte, int numByte){
     unsigned int end_byte_index = (unsigned int) (startByte + numByte) % B_SIZE;
 
     if(end_index > D_POINTER){
-        cout << "OUT OF MEMORY" << endl;
+        cerr << "OUT OF MEMORY" << endl;
         return -1; 
     }
 
-    for(unsigned int i = index; i < (end_index + (end_byte_index > 0)); i++){
+    unsigned int offset = 0;
+    if(end_byte_index > 0){
+      offset = 1;
+    }
+    for(unsigned int i = index; i < (end_index + offset); i++){
         //Assume position 0 in dMap is always 0
         if(!this->readBit(this->dMap, inode.ptrs[i])){
             inode.ptrs[i] = findEmptyBlock();
@@ -184,23 +189,20 @@ int Controller::write(string filename, char c, int startByte, int numByte){
     //end
     char* e_block = (char*)malloc(BYTE * B_SIZE);
     if(end_byte_index > 0){
-        this->readBlock(e_block,inode.ptrs[index]);
+        this->readBlock(e_block,inode.ptrs[end_index]);
     }
     for(unsigned int i = 0; i < end_byte_index; i++){
         e_block[i] = c;
     }
-    
-    //
-    //
-    //Null Terminate e_block after end_byte_index
-    //
-    //
+    for(unsigned int i = end_byte_index; i < B_SIZE; i++){
+      e_block[i] = '\0';
+    }
 
-    for(unsigned int i = index; i < (end_index + (end_byte_index > 0)?1:0); i++){
+    for(unsigned int i = index; i < (end_index + offset); i++){
         char* type_block = d_block;
         if(i == index && byte_index > 0){
             type_block = f_block;
-        }else if(i == (end_index + (end_byte_index > 0)?1:0)){
+        }else if(i == end_index){
             type_block = e_block;
         }
         if(inode.ptrs[i] != 0){
@@ -215,8 +217,7 @@ int Controller::write(string filename, char c, int startByte, int numByte){
     free(e_block);
     
     fseek(fh, filePos * B_SIZE, SEEK_SET);
-    fwrite(&inode, BYTE, B_SIZE, fh);
-
+    fwrite(&inode, sizeof(inode_t), B_SIZE, fh);
 
     return 1;
 }

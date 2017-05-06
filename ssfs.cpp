@@ -62,10 +62,12 @@ int main(int argc, char **argv){
       break;
     case 2:
       butt = "big_ass";
+      status = 0;
       status = disk.create(butt);
       if(status == -1){
 	cerr << "Create is bad" << endl;
       }
+      status = 0;
       status = disk.write(butt, 'D', 0, 200);
       if(status == -1){
 	cerr << "Write is bad" << endl;
