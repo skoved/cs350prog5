@@ -39,3 +39,6 @@ test:
 
 gdb: ssfs
 	gdb --args ssfs disk.txt t 1;
+
+valgrind:
+	 valgrind --leak-check=yes ./ssfs disk.txt thing 0;

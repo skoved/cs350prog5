@@ -16,6 +16,13 @@
 #include "inode.h"
 #include "superblock.h"
 
+#define handle_error(msg)			\
+  do{						\
+    perror(msg);				\
+    exit(EXIT_FAILURE);				\
+  } while(0)
+
+
 
 #define B_SIZE (unsigned int)sb.blockSize
 #define BYTE sizeof(char)
@@ -25,12 +32,6 @@
 
 #define MAX_DBLOCK sb.numBlocks
 #define ADDR_START 259
-
-#define handle_error(msg)			\
-  do{						\
-    perror(msg);				\
-    exit(EXIT_FAILURE);				\
-  } while(0)
 
 #define SUPER_POS 0
 #define IMAP_POS 1

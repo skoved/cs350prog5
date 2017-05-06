@@ -165,7 +165,7 @@ int Controller::write(string filename, char c, int startByte, int numByte){
     }
 
     //front
-    char* f_block = (char*)malloc(BYTE * B_SIZE);
+    char* f_block = (char*)malloc(B_SIZE * sizeof(*f_block));
     if(byte_index > 0){
         this->readBlock(f_block,inode.ptrs[index]);
     }
@@ -179,13 +179,12 @@ int Controller::write(string filename, char c, int startByte, int numByte){
     for(unsigned int i = stop; i < B_SIZE; i++){
         f_block[i] = '\0';
     }
-
     //regular
-    char* d_block = (char*)malloc(BYTE * B_SIZE);
+    char* d_block = (char*)malloc(B_SIZE * sizeof(*d_block));
     for(unsigned int i = 0; i < B_SIZE; i++){
         d_block[i] = c;
     }
-
+    
     //end
     char* e_block = (char*)malloc(BYTE * B_SIZE);
     if(end_byte_index > 0){
@@ -199,8 +198,8 @@ int Controller::write(string filename, char c, int startByte, int numByte){
     }
 
     for(unsigned int i = index; i < (end_index + offset); i++){
-        char* type_block = d_block;
-        if(i == index && byte_index > 0){
+      char* type_block = d_block;
+      if(i == index && byte_index > 0){
             type_block = f_block;
         }else if(i == end_index){
             type_block = e_block;
@@ -243,7 +242,7 @@ int Controller::read(string filename, int startByte, int numByte){
       return -1;
     }
     
-    char* data_block = (char*)malloc(BYTE * B_SIZE);
+    char* data_block = (char*)malloc(B_SIZE * sizeof(*data_block));
 
     if(inode.ptrs[index] == 0 || !this->readBit(this->dMap, inode.ptrs[index])){
       free(data_block);
@@ -294,6 +293,8 @@ int Controller::list(){
 int Controller::shutdown(){
     this->writeBlock(this->iMap, IMAP_POS);
     this->writeBlock(this->dMap, DMAP_POS);
+    free(this->iMap);
+    free(this->dMap);
     fclose(fh);
     return -1;
 }
