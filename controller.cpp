@@ -185,7 +185,7 @@ int Controller::write(string filename, char c, int startByte, int numByte){
         f_block[i] = c;
     }
     for(unsigned int i = stop; i < B_SIZE; i++){
-        f_block[i] = 0;
+        f_block[i] = '\0';
     }
 
     //regular
@@ -197,7 +197,7 @@ int Controller::write(string filename, char c, int startByte, int numByte){
     //end
     char* e_block = (char*)malloc(BYTE * B_SIZE);
     if(end_byte_index > 0){
-        this->readBlock(f_block,index);
+        this->readBlock(e_block,index);
     }
     for(unsigned int i = 0; i < end_byte_index; i++){
         e_block[i] = c;
@@ -241,8 +241,10 @@ int Controller::read(string filename, int startByte, int numByte){
 
     this->readBlock(data_block, index);
     for(unsigned int i = startByte; i < (unsigned int)startByte + numByte; i++){
-        cout << data_block[i%B_SIZE];
-        if((i % B_SIZE) == 0){
+
+      cout << data_block[i%B_SIZE];
+
+      if((i % B_SIZE) == 0){
             this->readBlock(data_block, index + num_block++);
         }
     }
@@ -406,16 +408,9 @@ int Controller::readBlock(char* data, unsigned int block_pos){
         return -1;
     }
 
-    //Insert imap, insert dmap (in that order)
     fseek(fh, B_SIZE * block_pos, SEEK_SET);
-
-    char* temp = (char*)malloc(BYTE * B_SIZE);
-    fread(temp, BYTE, B_SIZE, fh);
-
-    for(unsigned int i = 0; i < B_SIZE; i++){
-        data[i] = temp[i];
-    }
-
+    fread(data, BYTE, B_SIZE, fh);
+    
     return 1;
 }
 
