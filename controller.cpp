@@ -129,7 +129,6 @@ int Controller::remove(string filename){
 }
 
 int Controller::write(string filename, char c, int startByte, int numByte){
-  //Change all ternaries to safer assignments
     int filePos = this->findPosition(filename);
     if(filePos <= 0){
         return -1;
@@ -147,7 +146,7 @@ int Controller::write(string filename, char c, int startByte, int numByte){
     unsigned int byte_index = (unsigned int) startByte % B_SIZE;
     unsigned int end_byte_index = (unsigned int) (startByte + numByte) % B_SIZE;
 
-    if(end_index > D_POINTER){
+    if((end_index) >= D_POINTER){
         cerr << "OUT OF MEMORY" << endl;
         return -1; 
     }
@@ -156,6 +155,7 @@ int Controller::write(string filename, char c, int startByte, int numByte){
     if(end_byte_index > 0){
       offset = 1;
     }
+    
     for(unsigned int i = index; i < (end_index + offset); i++){
         //Assume position 0 in dMap is always 0
         if(!this->readBit(this->dMap, inode.ptrs[i])){
