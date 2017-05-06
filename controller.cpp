@@ -214,6 +214,9 @@ int Controller::write(string filename, char c, int startByte, int numByte){
 
 int Controller::read(string filename, int startByte, int numByte){
     int inode_pos = this->findPosition(filename);
+    if(inode_pos == -1){
+      return -1;
+    }
     inode_t inode;
 
     fseek(fh, inode_pos * B_SIZE, SEEK_SET);
