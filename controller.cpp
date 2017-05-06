@@ -192,9 +192,9 @@ int Controller::write(string filename, char c, int startByte, int numByte){
 
     for(unsigned int i = index; i < (end_index + (end_byte_index > 0)?1:0); i++){
         char* type_block = d_block;
-        if(i == index){
+        if(i == index && byte_index > 0){
             type_block = f_block;
-        }else if(i == end_index){
+        }else if(i == (end_index + (end_byte_index > 0)?1:0)){
             type_block = e_block;
         }
         if(inode.ptrs[i] != 0){
