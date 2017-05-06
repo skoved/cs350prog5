@@ -162,7 +162,7 @@ int Controller::write(string filename, char c, int startByte, int numByte){
     //front
     char* f_block = (char*)malloc(BYTE * B_SIZE);
     if(byte_index > 0){
-        this->readBlock(f_block,index);
+        this->readBlock(f_block,inode.ptrs[index]);
     }
     unsigned int stop = B_SIZE;
     if(end_index == index){
@@ -184,11 +184,17 @@ int Controller::write(string filename, char c, int startByte, int numByte){
     //end
     char* e_block = (char*)malloc(BYTE * B_SIZE);
     if(end_byte_index > 0){
-        this->readBlock(e_block,index);
+        this->readBlock(e_block,inode.ptrs[index]);
     }
     for(unsigned int i = 0; i < end_byte_index; i++){
         e_block[i] = c;
     }
+    
+    //
+    //
+    //Null Terminate e_block after end_byte_index
+    //
+    //
 
     for(unsigned int i = index; i < (end_index + (end_byte_index > 0)?1:0); i++){
         char* type_block = d_block;

@@ -49,16 +49,28 @@ int main(int argc, char **argv){
       butt = "ass";
       status =  disk.create(butt);
       if (status == -1){
-	perror("Create is bad\n");
+	cerr << "Create is bad" << endl;
       }
       status = disk.write(butt, 'A', 0, 5);
       if (status == -1){
-        perror("Write is bad\n");
+        cerr << "Write is bad" << endl;
       }
       disk.cat(butt);
       disk.read(butt, 2, 3);
       
       disk.write(butt, 'S', 2, 5);
+      break;
+    case 2:
+      butt = "big_ass";
+      status = disk.create(butt);
+      if(status == -1){
+	cerr << "Create is bad" << endl;
+      }
+      status = disk.write(butt, 'D', 0, 200);
+      if(status == -1){
+	cerr << "Write is bad" << endl;
+      }
+      disk.read(butt, 120, 10);
       break;
     }
     disk.cat(butt);    
