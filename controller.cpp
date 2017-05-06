@@ -94,6 +94,7 @@ int Controller::cat(string filename){
 
     fseek(fh, inode_pos * B_SIZE, SEEK_SET);
     fread(&inode, sizeof(inode_t), 1, fh);
+    
     this->read(filename, 0, inode.fileSize);
     
     return 1;
@@ -222,21 +223,35 @@ int Controller::read(string filename, int startByte, int numByte){
     fseek(fh, inode_pos * B_SIZE, SEEK_SET);
     fread(&inode, sizeof(inode_t), 1, fh);
     rewind(fh);
-
-    char* data_block = (char*)malloc(BYTE * B_SIZE);
+    
 
     unsigned int index = (unsigned int)startByte/B_SIZE;
     //unsigned int byte_index = (unsigned int)startByte % B_SIZE;
     unsigned int num_block = 1;
 
-    this->readBlock(data_block, index);
+    if(startByte + numByte > inode.fileSize){
+      return -1;
+    }
     
+    char* data_block = (char*)malloc(BYTE * B_SIZE);
+
+    //FIX: ADD check to make sure that inode.ptrs[index] is valid in dMap
+    if(inode.ptrs[index] == 0 || !this->readBit(this->dMap, inode.ptrs[index])){
+      free(data_block);
+      return -1;
+    }
+    this->readBlock(data_block, inode.ptrs[index]);
     for(unsigned int i = startByte; i < (unsigned int)startByte + numByte; i++){
 
       cout << data_block[i%B_SIZE];
 
       if((i % B_SIZE) == 0){
-            this->readBlock(data_block, index + num_block++);
+	if(inode.ptrs[index] == 0 || !this->readBit(this->dMap, inode.ptrs[index])){
+	  free(data_block);
+	  cout << "Prematurely reached end of file"  << endl;
+	  return -1;
+	}
+	this->readBlock(data_block, inode.ptrs[index + num_block++]);
       }
     }
     cout << endl;
