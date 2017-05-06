@@ -230,7 +230,7 @@ int Controller::read(string filename, int startByte, int numByte){
 
     unsigned int index = (unsigned int)startByte/B_SIZE;
     //unsigned int byte_index = (unsigned int)startByte % B_SIZE;
-    unsigned int num_block = 1;
+    unsigned int num_block = 0;
 
     if(startByte + numByte > inode.fileSize){
       return -1;
@@ -249,12 +249,13 @@ int Controller::read(string filename, int startByte, int numByte){
       cout << data_block[i%B_SIZE];
 
       if((i % B_SIZE) == 0){
-	if(inode.ptrs[index] == 0 || !this->readBit(this->dMap, inode.ptrs[index])){
+	if(inode.ptrs[index + num_block] == 0 || !this->readBit(this->dMap, inode.ptrs[index + num_block])){
 	  free(data_block);
 	  cout << "Prematurely reached end of file"  << endl;
 	  return -1;
 	}
-	this->readBlock(data_block, inode.ptrs[index + num_block++]);
+	num_block++;
+	this->readBlock(data_block, inode.ptrs[index + num_block]);
       }
     }
     cout << endl;
