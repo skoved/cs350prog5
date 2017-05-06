@@ -16,15 +16,15 @@
 #include "inode.h"
 #include "superblock.h"
 
-#define SUPER_POS 0
-#define IMAP_POS 1
-#define DMAP_POS 2
 
 #define B_SIZE (unsigned int)sb.blockSize
 #define BYTE sizeof(char)
 #define INODE_MAX 256
 #define NAME_SIZE 32
 #define D_POINTER 12
+
+#define MAX_DBLOCK sb.numBlocks
+#define ADDR_START 259
 
 #define handle_error(msg)			\
   do{						\
@@ -35,6 +35,8 @@
 #define SUPER_POS 0
 #define IMAP_POS 1
 #define DMAP_POS 2
+#define INODE_POS 3
+#define DBLOC_POS 259
 
 #define SIZE (sizeof(unsigned int) * buffer_size)
 
@@ -70,7 +72,7 @@ public:
 
   int read(std::string filename, int startByte, int numByte);
 
-  int list(std::string filename);
+  int list();
 
   int shutdown(); 
 
@@ -80,12 +82,12 @@ public:
   
   void setBit(char* a, unsigned int bit_pos, bool set_value);
   
-  int writeBlock(unsigned int block_pos, char* data);
+  int writeBlock(char* data, unsigned int block_pos);
   
-  int readBlock(unsigned int block_pos, char* data);
+  int readBlock(char* data, unsigned int block_pos);
 
   int findPosition(std::string filename);
 
-  int findBlock();	
+  int findEmptyBlock();	
 };
 #endif
