@@ -36,14 +36,14 @@ int main(int argc, char **argv){
       if (status == -1){
 	perror("Create is bad\n");
       }
-      status = disk.write(butt, 'H', 1, 5);
+      status = disk.write(butt, 'H', 0, 5);
       if (status == -1){
         perror("Write is bad\n");
       }
       disk.cat(butt);
-      disk.read(butt, 1, 5);
-      cout << endl;
+      disk.read(butt, 0, 5);
       disk.write(butt, 'G', 2, 5);
+      
       break;
     case 1:
       butt = "ass";
@@ -51,13 +51,13 @@ int main(int argc, char **argv){
       if (status == -1){
 	perror("Create is bad\n");
       }
-      status = disk.write(butt, 'A', 1, 5);
+      status = disk.write(butt, 'A', 0, 5);
       if (status == -1){
         perror("Write is bad\n");
       }
       disk.cat(butt);
-      disk.read(butt, 1, 5);
-      cout << endl;
+      disk.read(butt, 2, 3);
+      
       disk.write(butt, 'S', 2, 5);
       break;
     }
