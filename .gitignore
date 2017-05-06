@@ -10,3 +10,5 @@ ssfs
 *#
 *.gch
 *.ssfs
+disk.txt
+disk.ssfs
