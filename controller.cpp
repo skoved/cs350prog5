@@ -31,15 +31,6 @@ Controller::Controller(std::string filename, unsigned int buffer_size){
 
     this->readBlock(this->iMap, IMAP_POS);
     this->readBlock(this->dMap, DMAP_POS);
-
-
-    cout << "B_SIZE : " << B_SIZE << endl;
-    cin.ignore();
-
-    for(unsigned int i = 0; i < 3; i++){
-        cout << "Block " << i << " has value : " << (int)this->iMap[i] << endl;
-    }
-
 }
 
 
@@ -76,9 +67,6 @@ int Controller::create(string filename){
     createInode(filename.c_str(), empty_inode);
     this->setBit(iMap, empty_inode, 1);
     this->writeBlock(this->iMap, IMAP_POS);
-
-    //Create INode, mark map
-    cout << "Reading iMap at altered position : " << (int)this->iMap[empty_inode] << endl;
 
     return 1;
 }
@@ -124,11 +112,8 @@ int Controller::cat(string filename){
         }else{
             break;
         }
-        cout << endl;
     }
     cout << endl;
-
-    cout << "Check formation on cat " << this->readBit(this->iMap, 3)  << endl;
 
     return 1;
 }

@@ -13,7 +13,6 @@
 #include "diskop.hpp"
 #include "superblock.h"
 
-#define RUN_NUM 1
 
 using namespace std;
 
@@ -29,8 +28,9 @@ int main(int argc, char **argv){
     Controller disk(filename, 1);
     string butt = "butt";
     int status = 0;
+    int run_num = atoi(argv[3]);
     
-    switch(RUN_NUM){
+    switch(run_num){
     case 0:
       status =  disk.create(butt);
       if (status == -1){

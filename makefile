@@ -32,12 +32,13 @@ test:
 	make;
 	./ssfs_mkdsk 1024 128 disk.txt;
 	cp disk.txt store.txt;
-	./ssfs disk.txt thing;
+	./ssfs disk.txt thing 0;
 	diff disk.txt store.txt;
 
 test2:
-	./ssfs disk.txt thing;
-	diff disk.txt store.txt;
+	./ssfs disk.txt thing 1;
+	./ssfs disk.txt thing 2;
+	./ssfs disk.txt thing 3;
 
 gdb: ssfs
 	gdb --args ssfs disk.txt t;
