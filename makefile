@@ -38,4 +38,4 @@ test:
 	./ssfs disk.txt thing 3;
 
 gdb: ssfs
-	gdb --args ssfs disk.txt t;
+	gdb --args ssfs disk.txt t 1;
