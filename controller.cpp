@@ -137,6 +137,9 @@ int Controller::write(string filename, char c, int startByte, int numByte){
     inode_t inode;
     fseek(fh, filePos * B_SIZE, SEEK_SET);	
     fread(&inode, sizeof(inode_t), 1, fh);
+    
+    if(startByte > inode.fileSize)
+        return -1;
 
     unsigned int index = (unsigned int) startByte/B_SIZE;
     unsigned int end_index = (unsigned int) (startByte + numByte)/B_SIZE;
