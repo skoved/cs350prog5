@@ -86,35 +86,14 @@ int Controller::import(string filename, string unix_filename){
 
 
 int Controller::cat(string filename){
-    int inode_pos = this->findPosition(filename);
+  /* int inode_pos = this->findPosition(filename);
+  if
     inode_t inode;
 
     fseek(fh, inode_pos * B_SIZE, SEEK_SET);
     fread(&inode, sizeof(inode_t), 1, fh);
-    rewind(fh);
-
-    char* data_block = (char*)malloc(BYTE * B_SIZE);
-
-    unsigned int cal_start = 0;
-    unsigned int num_block = inode.fileSize;
-
-
-    if(num_block == 0){
-        return 1;
-    }
-
-    int readPos = 0;
-    for(unsigned int i = cal_start; i < 12; i++){
-        if(this->readBit(this->dMap, inode.ptrs[i])){
-            this->readBlock(data_block, inode.ptrs[i]);
-            for(; readPos<inode.fileSize && readPos<sb.blockSize; readPos++)
-                cout << (char)data_block[readPos%sb.blockSize];
-        }else{
-            break;
-        }
-    }
-    cout << endl;
-
+    this->read(filename, 0, inode.fileSize);
+  */
     return 1;
 }
 
@@ -217,6 +196,10 @@ int Controller::write(string filename, char c, int startByte, int numByte){
 
     inode.fileSize = ((startByte + numByte) > inode.fileSize)?startByte+numByte:inode.fileSize;
 
+    free(f_block);
+    free(d_block);
+    free(e_block);
+    
     fseek(fh, filePos * B_SIZE, SEEK_SET);
     fwrite(&inode, BYTE, B_SIZE, fh);
 
@@ -240,6 +223,7 @@ int Controller::read(string filename, int startByte, int numByte){
     unsigned int num_block = 1;
 
     this->readBlock(data_block, index);
+    
     for(unsigned int i = startByte; i < (unsigned int)startByte + numByte; i++){
 
       cout << data_block[i%B_SIZE];
@@ -250,6 +234,9 @@ int Controller::read(string filename, int startByte, int numByte){
     }
     cout << endl;
 
+
+    free(data_block);
+    
     return 1;
 
 }

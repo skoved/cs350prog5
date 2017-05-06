@@ -28,14 +28,11 @@ inode.o: inode.cpp
 	$(CXX) $(CXXFLAGS) -c -g inode.cpp
 clean: 
 	rm $(OBJ) $(OBJ2) ssfs ssfs_mkdsk *.ssfs
-test:
+init:
 	make;
 	./ssfs_mkdsk 1024 128 disk.txt;
-	cp disk.txt store.txt;
+test:
 	./ssfs disk.txt thing 0;
-	diff disk.txt store.txt;
-
-test2:
 	./ssfs disk.txt thing 1;
 	./ssfs disk.txt thing 2;
 	./ssfs disk.txt thing 3;
