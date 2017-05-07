@@ -279,10 +279,7 @@ int Controller::list(){
             fseek(fh, i * B_SIZE, SEEK_SET);
             fread(&inode, sizeof(inode_t), 1, fh);
             rewind(fh);
-            string filename = "";
-            for(unsigned int j = 0; j < 33 && inode.fileName[j] != '\0'; j++){
-                filename.insert(filename.end(), inode.fileName[j]);
-            }
+            string filename(inode.fileName);
             cout << "File " << filename << " of size: " << inode.fileSize << endl;
         }
     }
