@@ -93,6 +93,7 @@ int main(int argc, char **argv){
 	cerr << "Create is bad" << endl;
       }
       disk.list();
+      cout << endl;
       disk.remove("fick");
       disk.remove("fickus");
       disk.remove("cunts");
