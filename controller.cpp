@@ -371,31 +371,31 @@ void Controller::setBit(char* a, unsigned int bit_pos, bool set_value){
                 a[index] = temp;
                 break;
             case 1:
-                temp = a[index] | 0b11111101;
+                temp = a[index] & 0b11111101;
                 a[index] = temp;
                 break;
             case 2:
-                temp = a[index] | 0b11111011;
+                temp = a[index] & 0b11111011;
                 a[index] = temp;
                 break;
             case 3:
-                temp = a[index] | 0b11110111;
+                temp = a[index] & 0b11110111;
                 a[index] = temp;
                 break;
             case 4:
-                temp = a[index] | 0b11101111;
+                temp = a[index] & 0b11101111;
                 a[index] = temp;
                 break;
             case 5:
-                temp = a[index] | 0b11011111;
+                temp = a[index] & 0b11011111;
                 a[index] = temp;
                 break;
             case 6:
-                temp = a[index] | 0b10111111;
+                temp = a[index] & 0b10111111;
                 a[index] = temp;
                 break;
             case 7:
-                temp = a[index] | 0b01111111;
+                temp = a[index] & 0b01111111;
                 a[index] = temp;
                 break;
         }
