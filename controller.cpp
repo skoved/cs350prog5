@@ -196,9 +196,6 @@ int Controller::write(string filename, char c, int startByte, int numByte){
     for(unsigned int i = 0; i < end_byte_index; i++){
         e_block[i] = c;
     }
-    for(unsigned int i = end_byte_index; i < B_SIZE; i++){
-      e_block[i] = '\0';
-    }
 
     for(unsigned int i = index; i < (end_index + offset); i++){
       char* type_block = d_block;
@@ -213,6 +210,7 @@ int Controller::write(string filename, char c, int startByte, int numByte){
     }
 
     //Add single indirect pointer
+    
     
 
     inode.fileSize = ((startByte + numByte) > inode.fileSize)?startByte+numByte:inode.fileSize;
