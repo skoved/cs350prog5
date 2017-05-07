@@ -263,7 +263,8 @@ int Controller::write(string filename, char c, int startByte, int numByte){
     }
       
     
-    
+
+    this->writeBlock(this->dMap, DMAP_POS);
 
     inode.fileSize = ((startByte + numByte) > inode.fileSize)?startByte+numByte:inode.fileSize;
 
