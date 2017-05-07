@@ -123,21 +123,6 @@ int Controller::remove(string filename){
     }
 
     //Remove single indirect pointers
-    if(this->readBit(this->dMap, inode.indirect)){
-	unsigned int* indirect_block = (unsigned int*) malloc(sizeof(*indirect_block) * IB_SIZE);
-	this->readBlock(indirect_block, inode.indirect);
-	for(unsigned int i = 0; i < IB_SIZE; i++){
-	  this->setBit(this->dMap, indirect_block[i], 0);
-	  this->writeBlock(empty_block, indirect_block[i]);
-	}
-	this->setBit(this->dMap, inode.indirect, 0);
-	for(unsigned int i = 0; i < IB_SIZE; i++){
-	  indirect_block[i] = '\0';
-	}
-	this->writeBlock(indirect_block, inode.indirect);
-	free(indirect_block);
-    }
-    
     
     this->setBit(this->iMap, filePos, 0);
     this->writeBlock(this->iMap, IMAP_POS);
@@ -164,7 +149,7 @@ int Controller::write(string filename, char c, int startByte, int numByte){
     unsigned int byte_index = (unsigned int) startByte % B_SIZE;
     unsigned int end_byte_index = (unsigned int) (startByte + numByte) % B_SIZE;
 
-    if((end_index) >= D_POINTER + I_POINTER){
+    if((end_index) >= D_POINTER){
         cerr << "OUT OF MEMORY" << endl;
         return -1; 
     }
@@ -174,7 +159,7 @@ int Controller::write(string filename, char c, int startByte, int numByte){
       offset = 1;
     }
     
-    for(unsigned int i = index; i < (end_index + offset) && i < D_POINTER; i++){
+    for(unsigned int i = index; i < (end_index + offset); i++){
         //Assume position 0 in dMap is always 0
         if(!this->readBit(this->dMap, inode.ptrs[i])){
             inode.ptrs[i] = findEmptyBlock();
@@ -205,14 +190,14 @@ int Controller::write(string filename, char c, int startByte, int numByte){
     
     //end
     char* e_block = (char*)malloc(BYTE * B_SIZE);
-    if(end_byte_index > 0 && end_index < D_POINTER){
+    if(end_byte_index > 0){
         this->readBlock(e_block,inode.ptrs[end_index]);
     }
     for(unsigned int i = 0; i < end_byte_index; i++){
         e_block[i] = c;
     }
 
-    for(unsigned int i = index; i < (end_index + offset) && i < D_POINTER; i++){
+    for(unsigned int i = index; i < (end_index + offset); i++){
       char* type_block = d_block;
       if(i == index && byte_index > 0){
             type_block = f_block;
@@ -225,52 +210,17 @@ int Controller::write(string filename, char c, int startByte, int numByte){
     }
 
     //Add single indirect pointer
-
-
-    //Pre-calculate required # of blocks
     
-    if(end_index >= D_POINTER){
-      //Retrieve/Assign Indirect Block
-      unsigned int* indirect_block = (unsigned int*)malloc(IB_SIZE * sizeof(*indirect_block));
-      if(!this->readBit(this->dMap, inode.indirect)){
-	inode.indirect = findEmptyBlock();
-	this->setBit(this->dMap, inode.indirect, 1);
-      }else{
-	this->readBlock(indirect_block, inode.indirect);
-      }
-
-      //Pre-assign free blocks to write
-      for(unsigned int i = D_POINTER; i < end_index + offset; i++){
-	if(!this->readBit(this->dMap, indirect_block[i])){
-	  unsigned int free = findEmptyBlock();
-	  this->setBit(this->dMap, free, 1);
-	  indirect_block[i] = free;
-	}
-      }
-      this->writeBlock(indirect_block, inode.indirect);
-      
-      //Start writing (re-using d_block and e_block)
-      for(unsigned int i = D_POINTER; i < end_index + offset; i++){
-	if(i == end_index && offset == 1){
-	  //subtract i by 12
-	  this->writeBlock(e_block, indirect_block[i - D_POINTER]);
-	}else{
-	  //subtract i by 12
-	  this->writeBlock(d_block, indirect_block[i - D_POINTER]);
-	}
-      }
-      //  free(indirect_block);
-    }
-      
     
-
-    this->writeBlock(this->dMap, DMAP_POS);
 
     inode.fileSize = ((startByte + numByte) > inode.fileSize)?startByte+numByte:inode.fileSize;
 
     free(f_block);
     free(d_block);
     free(e_block);
+    
+    fseek(fh, filePos * B_SIZE, SEEK_SET);
+    fwrite(&inode, sizeof(inode_t), 1, fh);
 
     return 1;
 }
@@ -296,16 +246,14 @@ int Controller::read(string filename, int startByte, int numByte){
       return -1;
     }
     
-
-    if(inode.ptrs[index] == 0 || !this->readBit(this->dMap, inode.ptrs[index])){
-      return -1;
-    }
-    
     char* data_block = (char*)malloc(B_SIZE * sizeof(*data_block));
 
+    if(inode.ptrs[index] == 0 || !this->readBit(this->dMap, inode.ptrs[index])){
+      free(data_block);
+      return -1;
+    }
     this->readBlock(data_block, inode.ptrs[index]);
-    unsigned int i = startByte;
-    for(; i < (unsigned int)startByte + numByte && num_block + index < D_POINTER; i++){
+    for(unsigned int i = startByte; i < (unsigned int)startByte + numByte; i++){
 
       cout << data_block[i%B_SIZE];
 
@@ -320,31 +268,7 @@ int Controller::read(string filename, int startByte, int numByte){
       }
     }
 
-
-    
     //Add reading from single indirect pointer
-    if(this->readBit(this->dMap, inode.indirect)){
-      unsigned int end_block = startByte + numByte / B_SIZE;
-      unsigned int end_byte_index = startByte + numByte % B_SIZE;
-      unsigned int offset = (end_byte_index > 0)?1:0;
-
-      unsigned int* indirect_block = (unsigned int*) malloc(sizeof(*indirect_block) * IB_SIZE);
-      for(unsigned int j = D_POINTER; j < end_block + offset; j++){
-	this->readBlock(data_block, j);
-	for(;i < (unsigned int) startByte + numByte; i++){
-	  if(data_block[i%B_SIZE] != '\0'){
-	    cout << data_block[i%B_SIZE];
-	  }else{
-	    break;
-	  }
-	}
-	if(data_block[i%B_SIZE] == '\0'){
-	  break;
-	}
-      }
-      free(indirect_block);
-    }
-
     
     cout << endl;
 
@@ -503,22 +427,6 @@ int Controller::writeBlock(char* data, unsigned int block_pos){
     return 1;
 }
 
-int Controller::writeBlock(unsigned int* data, unsigned int block_pos){
-    if(data == NULL || fh == NULL || block_pos == 0){
-        return -1;
-    }
-
-    //Rewind to start of ssfs
-    rewind(fh);
-
-    //Insert imap, insert dmap (in that order)
-    fseek(fh, IB_SIZE * block_pos, SEEK_SET);
-
-    fwrite(data, sizeof(*data), IB_SIZE, fh);
-
-    return 1;
-}
-
 int Controller::readBlock(char* data, unsigned int block_pos){
     if(data == NULL || fh == NULL){
         return -1;
@@ -526,17 +434,6 @@ int Controller::readBlock(char* data, unsigned int block_pos){
 
     fseek(fh, B_SIZE * block_pos, SEEK_SET);
     fread(data, BYTE, B_SIZE, fh);
-    
-    return 1;
-}
-
-int Controller::readBlock(unsigned int* data, unsigned int block_pos){
-    if(data == NULL || fh == NULL){
-      return -1;
-    }
-    
-    fseek(fh, B_SIZE * block_pos, SEEK_SET);
-    fread(data, sizeof(*data), IB_SIZE, fh);
     
     return 1;
 }

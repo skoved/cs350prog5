@@ -34,16 +34,11 @@ init:
 	make;
 	./ssfs_mkdsk 1024 128 disk.txt;
 test:
-	./ssfs disk.txt thing 0;
-	./ssfs disk.txt thing 1;
-	./ssfs disk.txt thing 2;
-	./ssfs disk.txt thing 3;
-	./ssfs disk.txt thing 4;
-	./ssfs disk.txt thing 5;
-
+	./ssfs disk.txt input.txt;
+	
 
 gdb: ssfs
-	gdb --args ssfs disk.txt t 5;
+	gdb --args ssfs disk.txt input.txt;
 
 valgrind:
 	 valgrind --track-origins=yes --keep-stacktraces=alloc-and-free --leak-check=yes ./ssfs disk.txt thing 5;
