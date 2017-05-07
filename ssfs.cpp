@@ -125,6 +125,17 @@ int main(int argc, char **argv){
       cout << endl;
       disk.create("pls");
       disk.create("cunts");
+      break;
+    case 5:
+      butt = "long_dick";
+      disk.create(butt);
+      int size_of_a_long_dick = (128 * 12) + 5;
+      disk.write(butt, 'D', 0, size_of_a_long_dick);
+      disk.read(butt, 0, size_of_a_long_dick);
+      disk.list();
+      disk.remove(butt);
+      cout << endl;
+      break;
     }
     disk.cat(butt);    
     disk.list();

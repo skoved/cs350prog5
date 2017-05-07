@@ -9,8 +9,8 @@ struct inode{
     char fileName[33];
     int fileSize;
     int ptrs[12];
-    int indirect;
-    int dindirect;
+    unsigned int indirect;
+    unsigned int dindirect;
 };
 
 typedef struct inode inode_t;

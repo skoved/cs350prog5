@@ -25,10 +25,12 @@
 
 
 #define B_SIZE (unsigned int)sb.blockSize
+#define IB_SIZE (unsigned int)sb.blockSize/sizeof(unsigned int)
 #define BYTE sizeof(char)
 #define INODE_MAX 256
 #define NAME_SIZE 32
 #define D_POINTER 12
+#define I_POINTER (unsigned int)sb.blockSize
 
 #define MAX_DBLOCK sb.numBlocks
 #define ADDR_START 259
@@ -85,7 +87,11 @@ public:
   
   int writeBlock(char* data, unsigned int block_pos);
   
+  int writeBlock(unsigned int* data, unsigned int block_pos);
+
   int readBlock(char* data, unsigned int block_pos);
+
+  int readBlock(unsigned int* data, unsigned int block_pos);
 
   int findPosition(std::string filename);
 

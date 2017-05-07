@@ -37,10 +37,11 @@ test:
 	./ssfs disk.txt thing 2;
 	./ssfs disk.txt thing 3;
 	./ssfs disk.txt thing 4;
+	./ssfs disk.txt thing 5;
 
 
 gdb: ssfs
-	gdb --args ssfs disk.txt t 3;
+	gdb --args ssfs disk.txt t 5;
 
 valgrind:
-	 valgrind --leak-check=yes ./ssfs disk.txt thing 0;
+	 valgrind --track-origins=yes --keep-stacktraces=alloc-and-free --leak-check=yes ./ssfs disk.txt thing 5;
