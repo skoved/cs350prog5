@@ -36,6 +36,8 @@ test:
 	./ssfs disk.txt thing 1;
 	./ssfs disk.txt thing 2;
 	./ssfs disk.txt thing 3;
+	./ssfs disk.txt thing 4;
+
 
 gdb: ssfs
 	gdb --args ssfs disk.txt t 3;
