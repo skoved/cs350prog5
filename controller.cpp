@@ -122,6 +122,8 @@ int Controller::remove(string filename){
         }
     }
 
+    //Remove single indirect pointers
+    
     this->setBit(this->iMap, filePos, 0);
     this->writeBlock(this->iMap, IMAP_POS);
 
@@ -202,13 +204,16 @@ int Controller::write(string filename, char c, int startByte, int numByte){
       char* type_block = d_block;
       if(i == index && byte_index > 0){
             type_block = f_block;
-        }else if(i == end_index){
+        }else if(i == end_index && end_byte_index > 0){
             type_block = e_block;
         }
         if(inode.ptrs[i] != 0){
             this->writeBlock(type_block, inode.ptrs[i]);
         }
     }
+
+    //Add single indirect pointer
+    
 
     inode.fileSize = ((startByte + numByte) > inode.fileSize)?startByte+numByte:inode.fileSize;
 
@@ -264,6 +269,9 @@ int Controller::read(string filename, int startByte, int numByte){
 	this->readBlock(data_block, inode.ptrs[index + num_block]);
       }
     }
+
+    //Add reading from single indirect pointer
+    
     cout << endl;
 
 
