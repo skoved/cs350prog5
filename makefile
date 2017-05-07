@@ -1,5 +1,5 @@
-OBJ:= ssfs.o  diskop.o controller.o inode.o
-SRC:= ssfs.cpp diskop.cpp controller.cpp inode.cpp
+OBJ:= ssfs.o  diskop.o controller.o inode.o parse.o
+SRC:= ssfs.cpp diskop.cpp controller.cpp inode.cpp parse.cpp
 SRC2:= ssfs_mkdsk.cpp 
 OBJ2:= ssfs_mkdsk.o 
 CXX:= g++
@@ -26,6 +26,8 @@ controller.o: controller.cpp
 	$(CXX) $(CXXFLAGS) -c -g controller.cpp
 inode.o: inode.cpp
 	$(CXX) $(CXXFLAGS) -c -g inode.cpp
+parse.o: parse.cpp
+	$(CXX) $(CXXFLAGS) -c -g parse.cpp
 clean: 
 	rm $(OBJ) $(OBJ2) ssfs ssfs_mkdsk *.ssfs
 init:
