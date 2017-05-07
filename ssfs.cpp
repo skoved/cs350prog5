@@ -97,6 +97,34 @@ int main(int argc, char **argv){
       disk.remove("fick");
       disk.remove("fickus");
       disk.remove("cunts");
+      break;
+    case 4:
+      butt = "amicable";
+      status = disk.create("cunts");
+      if(status == -1){
+	cerr << "Create is bad" << endl;
+      }
+      status = disk.create("fick");
+      if(status == -1){
+	cerr << "Create is bad" << endl;
+      }
+      status = disk.create("fickus");
+      if(status == -1){
+	cerr << "Create is bad" << endl;
+      }
+      status = disk.create("amicable");
+      if(status == -1){
+	cerr << "Create is bad" << endl;
+      }
+      disk.list();
+      cout << endl;
+      disk.remove("fick");
+      disk.remove("fickus");
+      disk.remove("cunts");
+      disk.list();
+      cout << endl;
+      disk.create("pls");
+      disk.create("cunts");
     }
     disk.cat(butt);    
     disk.list();
