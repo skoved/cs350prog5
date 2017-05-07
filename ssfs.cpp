@@ -22,10 +22,11 @@ int main(int argc, char **argv){
         printf("Run as ./ssfs <disk file> <threadop file>\n");
         return 0;
     }
+    Controller disk(argv[1], 0);
     ifstream infile(argv[2]);
     if(infile.is_open()){
         string line;
-        while(getline(infile, line){
+        while(getline(infile, line)){
             vector<string> cmd = parse::split(line, ' ');
             if(cmd[0] == "create"){
                 disk.create(cmd[1]);
@@ -43,7 +44,7 @@ int main(int argc, char **argv){
                 disk.remove(cmd[1]);
             }
             else if(cmd[0] == "list"){
-                disk.list()
+                disk.list();
             }
             else if(cmd[0] == "shutdown"){
                 disk.shutdown();
