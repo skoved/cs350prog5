@@ -1,0 +1,8 @@
+create butt
+write butt c 0 5
+read butt 0 2
+cat butt
+list
+delete butt
+list
+shutdowm
