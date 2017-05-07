@@ -123,6 +123,7 @@ int Controller::remove(string filename){
     }
 
     this->setBit(this->iMap, filePos, 0);
+    this->writeBlock(this->iMap, IMAP_POS);
 
     free(empty_block);
     return 1;
