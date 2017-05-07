@@ -252,16 +252,19 @@ int Controller::write(string filename, char c, int startByte, int numByte){
       //Start writing (re-using d_block and e_block)
       for(unsigned int i = D_POINTER; i < end_index + offset; i++){
 	if(i == end_index && offset == 1){
-	  this->writeBlock(e_block, indirect_block[i]);
+	  //subtract i by 12
+	  this->writeBlock(e_block, indirect_block[i - D_POINTER]);
 	}else{
-	  this->writeBlock(d_block, indirect_block[i]);
+	  //subtract i by 12
+	  this->writeBlock(d_block, indirect_block[i - D_POINTER]);
 	}
       }
       //  free(indirect_block);
     }
       
     
-    
+
+    this->writeBlock(this->dMap, DMAP_POS);
 
     inode.fileSize = ((startByte + numByte) > inode.fileSize)?startByte+numByte:inode.fileSize;
 
