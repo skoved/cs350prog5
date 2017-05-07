@@ -348,7 +348,7 @@ void Controller::setBit(char* a, unsigned int bit_pos, bool set_value){
                 a[index] = temp;
                 break;
             case 5:
-                temp = a[index] | 0b001000000;
+                temp = a[index] | 0b00100000;
                 a[index] = temp;
                 break;
             case 6:
