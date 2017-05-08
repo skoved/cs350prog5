@@ -32,7 +32,7 @@ clean:
 	rm $(OBJ) $(OBJ2) ssfs ssfs_mkdsk *.ssfs
 init:
 	make;
-	./ssfs_mkdsk 1024 128 disk.txt;
+	./ssfs_mkdsk 1024 128 disk.ssfs;
 test:
 	./ssfs disk.txt input.txt;
 	

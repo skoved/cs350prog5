@@ -1,8 +1,20 @@
-create butt
-write butt c 0 5
-read butt 0 2
-cat butt
+create hi
+create foo
+create bar
+create sam
+create insang
+create curtis
+create raymond
+create hey
+write foo c 0 140
+read foo 11 129
+cat foo
+write foo d 130, 259
+cat foo
+write sam f 0 35
+read sam 13 20
+cat sam
 list
-delete butt
+delete hi
 list
 shutdowm

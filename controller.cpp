@@ -260,7 +260,6 @@ int Controller::read(string filename, int startByte, int numByte){
       if((i % B_SIZE) == 0 && i != 0){
 	if((inode.ptrs[index + num_block] == 0) || !this->readBit(this->dMap, inode.ptrs[index + num_block])){
 	  free(data_block);
-	  cout << "Prematurely reached end of file"  << endl;
 	  return -1;
 	}
 	num_block++;

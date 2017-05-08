@@ -1,0 +1,6 @@
+cat sam
+cat foo
+list
+delete curtis
+list
+shutdown
