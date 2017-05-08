@@ -248,7 +248,7 @@ int Controller::read(string filename, int startByte, int numByte){
     
     char* data_block = (char*)malloc(B_SIZE * sizeof(*data_block));
 
-    if(inode.ptrs[index] == 0 || !this->readBit(this->dMap, inode.ptrs[index])){
+    if(inode.ptrs[index] == 0){
       free(data_block);
       return -1;
     }

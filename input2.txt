@@ -1,6 +1,7 @@
-cat sam
-cat foo
 list
+cat sam
+delete sam
 delete curtis
+list
 list
 shutdown

@@ -16,5 +16,6 @@ read sam 13 20
 cat sam
 list
 delete hi
+delete foo
 list
 shutdowm
